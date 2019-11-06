@@ -9,7 +9,7 @@
         <relativePath>../xincan-transaction/pom.xml</relativePath>
     </parent>
 
-    <groupId>com.xincan.transaction.center</groupId>
+    <groupId>com.xincan.transaction</groupId>
     <artifactId>xincan-transaction-eureka</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>xincan-transaction-eureka</name>

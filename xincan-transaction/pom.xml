@@ -28,7 +28,7 @@
         <!-- spring-cloud版本配置 -->
         <spring-boot.version>2.1.4.RELEASE</spring-boot.version>
         <!-- spring-cloud版本配置 -->
-        <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
+        <spring-cloud.version>Finchley.RELEASE</spring-cloud.version>
         <!-- mysql数据库连接配置 -->
         <mysql-connector-java.version>8.0.18</mysql-connector-java.version>
         <!-- 阿里巴巴监听版本配置 -->

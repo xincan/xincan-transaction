@@ -1,33 +1,26 @@
 package com.xincan.transaction.server.system.service.impl;
 
-import cn.com.hatech.common.data.page.HatechPage;
 import cn.com.hatech.common.data.page.MybatisPage;
 import cn.com.hatech.common.data.universal.AbstractService;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.xincan.transaction.server.system.entity.User;
 import com.xincan.transaction.server.system.mapper.IUserMapper;
 import com.xincan.transaction.server.system.service.IUserService;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.mapstruct.factory.Mappers.getMapper;
 
 /**
  * @description: TODO

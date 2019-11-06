@@ -1,4 +1,4 @@
-package com.xincan.transaction.center;
+package com.xincan.transaction;
 
 
 import org.junit.Test;
