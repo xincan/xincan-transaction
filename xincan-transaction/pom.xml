@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.xincan.transaction</groupId>
+    <artifactId>xincan-transaction</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <modules>
+        <module>../xincan-transaction-user</module>
+		<module>../xincan-transaction-role</module>
+        <module>../xincan-transaction-eureka</module>
+    </modules>
+
+
+    <!-- 公共版本号统一存放处，便于以后修改，全局替换版本号 -->
+    <properties>
+        <xincan-transaction.version>1.0-SNAPSHOT</xincan-transaction.version>
+        <!-- 构建项目编码格式配置 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- java JDK版本配置 -->
+        <java.version>1.8</java.version>
+        <!-- 云原声jar依赖优化版本配置-->
+        <platform-bom.version>Cairo-SR7</platform-bom.version>
+        <!-- spring-cloud版本配置 -->
+        <spring-boot.version>2.1.4.RELEASE</spring-boot.version>
+        <!-- spring-cloud版本配置 -->
+        <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
+        <!-- mysql数据库连接配置 -->
+        <mysql-connector-java.version>8.0.18</mysql-connector-java.version>
+        <!-- 阿里巴巴监听版本配置 -->
+        <druid-spring-boot-starter.version>1.1.20</druid-spring-boot-starter.version>
+        <!-- MP版本配置 -->
+        <mybatis-plus-boot-starter.version>3.2.0</mybatis-plus-boot-starter.version>
+        <!-- 日志系统版本配置 -->
+        <lombok.version>1.18.4</lombok.version>
+        <!-- 斯瓦格api版本配置 -->
+        <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
+        <!-- 斯瓦格UI版本配置 -->
+        <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
+
+    </properties>
+
+    <!-- 定义依赖 -->
+    <dependencyManagement>
+
+        <dependencies>
+
+            <!-- 集成优化jar依赖 -->
+            <dependency>
+                <groupId>io.spring.platform</groupId>
+                <artifactId>platform-bom</artifactId>
+                <version>${platform-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- 集成spring-boot版本依赖 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- 集成spring-cloud版本依赖 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus-boot-starter.version}</version>
+            </dependency>
+
+            <!-- 集成阿里巴巴监听依赖 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid-spring-boot-starter.version}</version>
+            </dependency>
+
+            <!-- 集成lombok日志依赖 -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- 集成RESTFUL API文档插件依赖 -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${springfox-swagger2.version}</version>
+            </dependency>
+
+            <!-- 集成RESTFUL API UI 自定义文档插件依赖 -->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>swagger-bootstrap-ui</artifactId>
+                <version>${swagger-bootstrap-ui.version}</version>
+            </dependency>
+
+        </dependencies>
+
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-release</id>
+            <name>admin</name>
+            <!--<url>http://localhost:8081/repository/nexus-releases/</url>-->
+            <url>http://20t71z3582.iask.in:38459/repository/nexus-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <name>admin</name>
+            <!--<url>http://localhost:8081/repository/nexus-snapshots/</url>-->
+            <url>http://20t71z3582.iask.in:38459/repository/nexus-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>
