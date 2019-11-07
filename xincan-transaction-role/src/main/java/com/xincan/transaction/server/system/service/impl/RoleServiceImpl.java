@@ -1,15 +1,20 @@
 package com.xincan.transaction.server.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xincan.transaction.server.system.entity.Role;
+import com.xincan.transaction.server.system.entity.UserRole;
 import com.xincan.transaction.server.system.mapper.IRoleMapper;
+import com.xincan.transaction.server.system.mapper.IUserRoleMapper;
 import com.xincan.transaction.server.system.service.IRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @description: TODO
@@ -23,14 +28,54 @@ import java.util.List;
 public class RoleServiceImpl implements IRoleService {
 
     @Resource
-    private IRoleMapper userMapper;
+    private IRoleMapper roleMapper;
+
+    @Resource
+    private IUserRoleMapper userRoleMapper;
 
     @Override
     public IPage<Role> findRoles() {
         IPage<Role> page = new Page<>(1, 10);
-        IPage<Role> pageList = this.userMapper.selectPage(page, null);
-        List<Role> list = pageList.getRecords();
-        log.debug("查询角色信息");
-        return pageList;
+        return this.roleMapper.selectPage(page, null);
+    }
+
+    private int num = 0;
+
+    @Override
+    public List<Role> findRoleByUserId(String userId) {
+        List<String> roleIds = findUserRoleByUserId(userId)
+                .stream()
+                .map(ur -> ur.getRoleId())
+                .collect(Collectors.toList());
+
+        QueryWrapper<Role> roleQueryWrapper = new QueryWrapper();
+        roleQueryWrapper.lambda().in(Role::getId, roleIds);
+
+        List<Role> roles = this.roleMapper.selectList(roleQueryWrapper);
+
+        System.out.println("======================开启重试机制"+(num++)+"=============================");
+        try {
+            TimeUnit.SECONDS.sleep(4);
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        return roles;
+    }
+
+    /**
+     * @description: 根据用户信息查询用户角色
+     * @method: findUserRoleByUserId
+     * @author: Xincan Jiang
+     * @date: 2019-11-07 09:40:39
+     * @param: []
+     * @return: java.util.List<com.xincan.transaction.server.system.entity.UserRole>
+     * @exception:
+     */
+    private List<UserRole> findUserRoleByUserId(String userId) {
+        QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper();
+        userRoleQueryWrapper.lambda().eq(UserRole::getUserId, userId);
+        return this.userRoleMapper.selectList(userRoleQueryWrapper);
     }
 }

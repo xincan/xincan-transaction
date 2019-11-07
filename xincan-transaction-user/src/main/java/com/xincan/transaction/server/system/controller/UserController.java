@@ -3,14 +3,17 @@ package com.xincan.transaction.server.system.controller;
 import cn.com.hatech.common.data.result.ResultObject;
 import cn.com.hatech.common.data.result.ResultResponse;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xincan.transaction.server.system.entity.User;
+import com.xincan.transaction.server.system.feign.IFUserRoleService;
 import com.xincan.transaction.server.system.service.IUserService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +35,9 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IFUserRoleService userRoleService;
 
     @ApiOperation(value="添加员工信息",httpMethod="POST",notes="根据参数列表添加员工信息")
     @ApiImplicitParams({
@@ -189,7 +195,26 @@ public class UserController {
     }
 
 
+    @ApiOperation(value="根据用户ID查询角色信息",httpMethod="POST",notes="通过OpenFeign远程声明式事务，根据用户ID查询对应的角色信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="userId",value="用户ID", dataType = "String",paramType = "query")
+    })
+    @PostMapping("id")
+    public ResultObject findRoleByUserId(@RequestParam("userId") String userId){
+        JSONObject result = this.userRoleService.findRoleByUserId(userId);
+        if(!StringUtils.isEmpty(result)){
 
+            if(result.getInteger("code") == 10000){
+                log.info("{}", result.getString("msg"));
+                return ResultResponse.error(result.getString("msg"), result.get("data"));
+            }
+
+            log.info("{}", "根据用户ID查询角色信息成功");
+            return ResultResponse.success("根据用户ID查询角色信息成功", result.get("data"));
+        }
+        log.info("{}", "根据用户ID查询角色信息失败");
+        return ResultResponse.error("根据用户ID查询角色信息失败");
+    }
 
 
 

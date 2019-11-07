@@ -49,7 +49,7 @@ public class UserRole {
 
     @ApiModelProperty(value = "角色ID", dataType = "String", example = "UUID")
     @TableField("role_id")
-    private Integer roleId;
+    private String roleId;
 
     @ApiModelProperty(value = "创建时间", dataType = "Date", example = "2020-11-06 00:00:00")
     @TableField("create_time")

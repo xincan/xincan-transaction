@@ -18,6 +18,32 @@ eureka:
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${eureka.instance.port}/eureka/
 
+feign:
+  hystrix:
+    enabled: true
+
+hystrix:
+  shareSecurityContext: true
+  command:
+    default:
+      circuitBreaker:
+        sleepWindowInMilliseconds: 10000
+        forceClosed: true
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 20000
+
+
+ribbon:
+  ReadTimeout: 12000   # 请求处理的超时时间
+  ConnectTimeout: 3000 # 请求连接的超时时间
+#  MaxAutoRetriesNextServer: 3
+#  ribbon.MaxAutoRetries: 3
+#  OkToRetryOnAllOperations: true
+#
+#hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 15000
+
 spring:
   application:
     name: xincan-transaction-user
@@ -94,3 +120,4 @@ logging:
   level:
     com.xincan.transaction: debug
   file: ./log/${spring.application.name}/${spring.application.name}.log
+
