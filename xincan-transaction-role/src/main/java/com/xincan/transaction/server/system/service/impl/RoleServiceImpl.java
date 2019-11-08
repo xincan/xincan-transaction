@@ -42,7 +42,7 @@ public class RoleServiceImpl implements IRoleService {
     private int num = 0;
 
     @Override
-    public List<Role> findRoleByUserId(String userId) {
+    public List<Role> findRoleByUserId(String userId, Integer second) {
         List<String> roleIds = findUserRoleByUserId(userId)
                 .stream()
                 .map(ur -> ur.getRoleId())
@@ -55,7 +55,7 @@ public class RoleServiceImpl implements IRoleService {
 
         System.out.println("======================开启重试机制"+(num++)+"=============================");
         try {
-            TimeUnit.SECONDS.sleep(4);
+            Thread.sleep(second);
         }catch (InterruptedException e) {
             e.printStackTrace();
         }

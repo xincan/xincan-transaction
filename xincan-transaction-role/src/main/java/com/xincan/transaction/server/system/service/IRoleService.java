@@ -10,5 +10,5 @@ public interface IRoleService {
 
     IPage<Role> findRoles();
 
-    List<Role> findRoleByUserId(String userId);
+    List<Role> findRoleByUserId(String userId, Integer second);
 }

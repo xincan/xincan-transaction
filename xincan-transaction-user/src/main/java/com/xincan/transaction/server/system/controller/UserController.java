@@ -197,11 +197,12 @@ public class UserController {
 
     @ApiOperation(value="根据用户ID查询角色信息",httpMethod="POST",notes="通过OpenFeign远程声明式事务，根据用户ID查询对应的角色信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="userId",value="用户ID", dataType = "String",paramType = "query")
+            @ApiImplicitParam(name="userId",value="用户ID", dataType = "String",paramType = "query"),
+            @ApiImplicitParam(name="second",value="openfeign超时秒数", dataType = "Integer",paramType = "query")
     })
     @PostMapping("id")
-    public ResultObject findRoleByUserId(@RequestParam("userId") String userId){
-        JSONObject result = this.userRoleService.findRoleByUserId(userId);
+    public ResultObject findRoleByUserId(@RequestParam("userId") String userId, @RequestParam("second") Integer second){
+        JSONObject result = this.userRoleService.findRoleByUserId(userId, second);
         if(!StringUtils.isEmpty(result)){
 
             if(result.getInteger("code") == 10000){

@@ -27,22 +27,20 @@ hystrix:
   command:
     default:
       circuitBreaker:
-        sleepWindowInMilliseconds: 10000
+        sleepWindowInMilliseconds: 10000 # 熔断多少秒后去尝试恢复请求，默认5000ms
         forceClosed: true
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 20000
-
+            timeoutInMilliseconds: 20000 # 熔断器超时时间：默认1000ms
 
 ribbon:
-  ReadTimeout: 12000   # 请求处理的超时时间
-  ConnectTimeout: 3000 # 请求连接的超时时间
-#  MaxAutoRetriesNextServer: 3
-#  ribbon.MaxAutoRetries: 3
-#  OkToRetryOnAllOperations: true
-#
-#hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 15000
+  ReadTimeout: 12000          # 请求处理的超时时间
+  ConnectTimeout: 3000        # 请求连接的超时时间
+  MaxAutoRetries: 2           # 重试策略先尝试访问首选实例一次,失败后才会更换实例访问
+  MaxAutoRetriesNextServer: 3 # 更换实例访问的次数：通过参数设置为3, 所以会尝试更换3次实例进行重试
+  OkToRetryOnAllOperations: true
+
 
 spring:
   application:

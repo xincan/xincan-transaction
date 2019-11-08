@@ -15,11 +15,15 @@ import org.springframework.stereotype.Component;
 public class FUserRoleServiceFallback implements IFUserRoleService {
 
     @Override
-    public JSONObject findRoleByUserId(String userId) {
+    public JSONObject findRoleByUserId(String userId, Integer second) {
+        JSONObject data = new JSONObject();
+        data.put("data", userId);
+        data.put("second", second);
+
         JSONObject result = new JSONObject();
         result.put("code",10000);
         result.put("count", 0);
-        result.put("data", userId);
+        result.put("data", data);
         result.put("msg","数据请求失败FUserRoleServiceFallbackFactory");
         return result;
     }

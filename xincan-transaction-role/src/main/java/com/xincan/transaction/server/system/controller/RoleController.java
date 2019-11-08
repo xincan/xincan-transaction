@@ -45,8 +45,8 @@ public class RoleController {
             @ApiImplicitParam(name="userId",value="用户ID", dataType = "String",paramType = "query")
     })
     @PostMapping("user/id")
-    public ResultObject findRoleByUserId(@RequestParam("userId") String userId){
-        List<Role> roles = this.roleService.findRoleByUserId(userId);
+    public ResultObject findRoleByUserId(@RequestParam("userId") String userId, @RequestParam("second") Integer second){
+        List<Role> roles = this.roleService.findRoleByUserId(userId, second);
 
         if(roles.size() > 0){
             log.info("{}", "根据用户ID查询角色信息成功");

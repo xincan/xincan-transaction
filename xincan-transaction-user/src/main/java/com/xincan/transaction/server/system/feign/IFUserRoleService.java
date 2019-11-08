@@ -15,5 +15,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface IFUserRoleService {
 
     @PostMapping("/role/user/id")
-    JSONObject findRoleByUserId(@RequestParam("userId") String userId);
+    JSONObject findRoleByUserId(@RequestParam("userId") String userId, @RequestParam("second") Integer second);
 }
