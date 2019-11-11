@@ -20,12 +20,4 @@ import java.util.Map;
 @Mapper
 public interface IUserMapper extends IBaseMapper<User> {
 
-    /**
-     * 查询mysql用户信息
-     * @param map
-     * @return
-     */
-//    @TargetDataSource(value = DataSourceType.DATASOURCE_USER)
-    List<User> findAll(Page page, @Param("map") Map<String, Object> map);
-
 }

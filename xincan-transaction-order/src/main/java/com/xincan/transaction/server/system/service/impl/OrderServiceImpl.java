@@ -16,5 +16,7 @@ import javax.annotation.Resource;
 @Service("orderService")
 public class OrderServiceImpl extends AbstractService<Order> implements IOrderService {
 
+    @Resource
+    IOrderMapper orderMapper;
 
 }

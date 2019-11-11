@@ -1,66 +1,88 @@
 package com.xincan.transaction.config;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.xincan.transaction.server.system.entity.TenantDatasource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.HintShardingStrategyConfiguration;
 import org.apache.shardingsphere.core.exception.ShardingException;
 import org.apache.shardingsphere.core.util.InlineExpressionParser;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
+import org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.util.DataSourceUtil;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.util.PropertyUtil;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.*;
 
+@Slf4j
 @Configuration
 public class ShardingJdbcConfig {
 
-
-
-
-    @Autowired
-    private Environment environment;
-
     /**
-     * 获取自定义数据源名称
-     * @param environment
-     * @param prefix
-     * @return
+     * 配置主数据源相关设置
      */
-    private List<String> getDataSourceNames(final Environment environment, final String prefix) {
-        StandardEnvironment standardEnv = (StandardEnvironment) environment;
-        standardEnv.setIgnoreUnresolvableNestedPlaceholders(true);
-        return null == standardEnv.getProperty(prefix + "name")
-                ? new InlineExpressionParser(standardEnv.getProperty(prefix + "names")).splitAndEvaluate() : Collections.singletonList(standardEnv.getProperty(prefix + "name"));
-    }
+    // 数据源名称
+    @Value("${spring.shardingsphere.datasource.name}")
+    private String dsName;
+
+    // 数据库连接池类型
+    @Value("${spring.shardingsphere.datasource.main-datasource.type}")
+    private String dsType;
+
+    // 数据库驱动类
+    @Value("${spring.shardingsphere.datasource.main-datasource.driver-class-name}")
+    private String dsDriverClassName;
+
+    // 数据库连接
+    @Value("${spring.shardingsphere.datasource.main-datasource.url}")
+    private String dsUrl;
+
+    // 数据库用户名
+    @Value("${spring.shardingsphere.datasource.main-datasource.username}")
+    private String dsUsername;
+
+    // 数据库密码
+    @Value("${spring.shardingsphere.datasource.main-datasource.password}")
+    private String dsPassword;
 
     /**
      * 获取自定义数据源
      * @return
      */
     public Map<String, DataSource> getDataSourceMap() {
-        String prefix = "spring.shardingsphere.datasource.";
         Map<String, DataSource> dataSourceMap = new HashMap<>();
-        for (String each : getDataSourceNames(environment, prefix)) {
-            try {
-                Map<String, Object> dataSourceProps = PropertyUtil.handle(environment, prefix + each.trim(), Map.class);
-                DataSource dataSource = DataSourceUtil.getDataSource(dataSourceProps.get("type").toString(), dataSourceProps);
-                dataSourceMap.put(each, dataSource);
-            } catch (final ReflectiveOperationException ex) {
-                throw new ShardingException("Can't find datasource type!", ex);
-            }
+        TenantDatasource tenantDatasource = TenantDatasource.builder()
+                .tenantName(dsName)
+                .datasourceUrl(dsUrl)
+                .datasourceUsername(dsUsername)
+                .datasourcePassword(dsPassword)
+                .datasourceDriver(dsDriverClassName)
+                .datasourceType(dsType)
+                .build();
+        try {
+            DataSource dataSource = DataSourceUtil.getDataSource(tenantDatasource.getDatasourceType(), tenantDatasource.toDatasourceProp());
+            dataSourceMap.put(tenantDatasource.getTenantName(), dataSource);
+        } catch (ReflectiveOperationException e) {
+            log.error("初始化主数据源失败", e);
         }
         return dataSourceMap;
     }
@@ -72,7 +94,7 @@ public class ShardingJdbcConfig {
      */
     @Bean
     @Primary
-    public DataSource getDataSource() throws SQLException {
+    public DataSource shardingDataSource() throws SQLException {
         Properties props = new Properties();
         props.setProperty("sql.show", "true");
         ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
@@ -80,6 +102,7 @@ public class ShardingJdbcConfig {
         HintShardingStrategyConfiguration shardingStrategyConfiguration
                 = new HintShardingStrategyConfiguration(new DataSourceTypeHintShardingAlgorithm());
         shardingRuleConfiguration.setDefaultDatabaseShardingStrategyConfig(shardingStrategyConfiguration);
+        log.info("===========初始化主数据源=============");
         return ShardingDataSourceFactory.createDataSource(getDataSourceMap(), shardingRuleConfiguration, props);
     }
 
@@ -92,9 +115,9 @@ public class ShardingJdbcConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionFactory sqlSessionFactory(PaginationInterceptor paginationInterceptor) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource shardingDataSource, PaginationInterceptor paginationInterceptor) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(getDataSource());
+        sqlSessionFactoryBean.setDataSource(shardingDataSource);
         sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/*/*.xml"));
         // 设置分页
         sqlSessionFactoryBean.setPlugins(paginationInterceptor);

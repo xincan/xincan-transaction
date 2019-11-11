@@ -7,7 +7,4 @@
         <result column="name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
 
-
-
-
 </mapper>

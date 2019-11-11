@@ -42,40 +42,22 @@ public class OrderController {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private IOrderService orderService;
-
-    @Autowired
-    private DataSource dataSource;
-
     /**
      * 测试
      * @return
      */
+    @ApiOperation(value = "测试切换数据源插入租户", httpMethod = "GET", notes = "切换数据源插入租户")
+    @ApiImplicitParams({
+    })
     @GetMapping("/test")
     public ResultObject<String> testTransaction() throws SQLException {
-        // 开启XA分布式事务
-        TransactionTypeHolder.set(TransactionType.XA);
-        Connection connection = null;
-        try (HintManager hintManager = HintManager.getInstance(); ){
-            connection = dataSource.getConnection();
-            User user = new User(null, "测试1", 20, 0, new Date());
-            Order order = new Order(null, null);
-            // 设置不自动提交sql
-            connection.setAutoCommit(false);
-            hintManager.setDatabaseShardingValue("ds-user");
-            userService.insert(user);
-            hintManager.setDatabaseShardingValue("ds-order");
-            orderService.insert(order);
-            connection.commit();
+        try {
+            userService.testInsert();
             return ResultResponse.success("插入成功", "");
         }
         catch (Exception e) {
-            e.printStackTrace();
-            // 事务回滚
-            if (connection != null) {connection.rollback();}
+            log.error("插入失败", e);
         }
-        log.info("{}", "插入失败");
         return ResultResponse.error("插入失败");
     }
 

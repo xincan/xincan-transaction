@@ -1,7 +1,6 @@
 package com.xincan.transaction.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shardingsphere.api.sharding.ShardingValue;
 import org.apache.shardingsphere.api.sharding.hint.HintShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.hint.HintShardingValue;
 import org.springframework.util.CollectionUtils;
