@@ -13,7 +13,7 @@
     
     <groupId>com.xincan.transaction</groupId>
     <artifactId>xincan-transaction-user</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${xincan-transaction.version}</version>
     <name>xincan-transaction-user</name>
     <description>Demo project for Spring Boot</description>
 

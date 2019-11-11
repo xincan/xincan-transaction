@@ -106,6 +106,8 @@ public class UserServiceImpl extends AbstractService<User> implements IUserServi
             Integer num = this.userMapper.insertBatchTwo(list);
             long end  = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
+            session.commit();
+            session.clearCache();
             json.put("num", num);
             json.put("time", end - start);
             return json;
