@@ -13,6 +13,7 @@
         <module>../xincan-transaction-user</module>
 		<module>../xincan-transaction-role</module>
         <module>../xincan-transaction-eureka</module>
+        <module>../xincan-transaction-order</module>
     </modules>
 
 
@@ -41,7 +42,8 @@
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <!-- 斯瓦格UI版本配置 -->
         <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
-
+        <!-- sharding-jdbc版本配置 -->
+        <sharding-jdbc.version>4.0.0-RC2</sharding-jdbc.version>
     </properties>
 
     <!-- 定义依赖 -->
@@ -114,6 +116,19 @@
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>swagger-bootstrap-ui</artifactId>
                 <version>${swagger-bootstrap-ui.version}</version>
+            </dependency>
+
+            <!-- 集成sharding-jdbc依赖 -->
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+                <version>${sharding-jdbc.version}</version>
+            </dependency>
+            <!-- 集成sharding-jdbc xa分布式事务 依赖 -->
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>sharding-transaction-xa-core</artifactId>
+                <version>${sharding-jdbc.version}</version>
             </dependency>
 
         </dependencies>
