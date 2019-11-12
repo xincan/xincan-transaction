@@ -1,4 +1,4 @@
-package com.xincan.transaction.server.system.entity;
+package com.xincan.transaction.order.server.system.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

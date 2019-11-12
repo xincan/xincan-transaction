@@ -1,4 +1,4 @@
-package com.xincan.transaction;
+package com.xincan.transaction.order;
 
 
 import org.junit.Test;
