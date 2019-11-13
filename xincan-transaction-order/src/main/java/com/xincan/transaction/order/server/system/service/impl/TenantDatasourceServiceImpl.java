@@ -4,6 +4,7 @@ import cn.com.hatech.common.data.page.MybatisPage;
 import cn.com.hatech.common.data.universal.AbstractService;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.properties.DruidStatProperties;
+import com.alibaba.druid.util.JdbcConstants;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
@@ -20,10 +21,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.hint.HintManager;
+import org.apache.shardingsphere.core.database.DatabaseTypes;
 import org.apache.shardingsphere.core.rule.ShardingRule;
+import org.apache.shardingsphere.core.spi.database.MySQLDatabaseType;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.util.DataSourceUtil;
+import org.apache.shardingsphere.transaction.core.ResourceDataSource;
+import org.apache.shardingsphere.transaction.xa.XAShardingTransactionManager;
+import org.apache.shardingsphere.transaction.xa.manager.XATransactionManagerLoader;
+import org.apache.shardingsphere.transaction.xa.spi.XATransactionManager;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +39,8 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
+import javax.transaction.TransactionManager;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -60,7 +69,7 @@ public class TenantDatasourceServiceImpl extends AbstractService<TenantDatasourc
     private String mainDataSource;
 
     @Autowired
-    DruidProperties druidProperties;
+    private DruidProperties druidProperties;
 
     /**
      * 刷新租户数据源
@@ -74,9 +83,10 @@ public class TenantDatasourceServiceImpl extends AbstractService<TenantDatasourc
         try {
             // 获取主数据源中所有租户数据源数据
             List<TenantDatasource> list = tenantDatasourceMapper.selectList(new QueryWrapper<>());
+
             for (TenantDatasource tenantDatasource : list) {
                 // 注入spring datasource
-                //DataSource dataSource = DataSourceUtil.getDataSource(tenantDatasource.getDatasourceType(), tenantDatasource.toDatasourceProp());
+//                DataSource dataSource = DataSourceUtil.getDataSource(tenantDatasource.getDatasourceType(), tenantDatasource.toDatasourceProp());
                 // 注入druid datasource
                 DruidDataSource dataSource = druidProperties.getDruidDataSource();
                 dataSource.setUrl(tenantDatasource.getDatasourceUrl());
@@ -85,6 +95,9 @@ public class TenantDatasourceServiceImpl extends AbstractService<TenantDatasourc
                 shardingDataSource.getDataSourceMap().put(tenantDatasource.getTenantName(), dataSource);
                 dsNames.add(tenantDatasource.getTenantName());
             }
+            // 重新设置XA事务数据源
+            shardingDataSource.getRuntimeContext().getShardingTransactionManagerEngine()
+                    .init(DatabaseTypes.getActualDatabaseType("MySQL"), shardingDataSource.getDataSourceMap());
             log.info("添加租户数据源:" + StringUtils.collectionToDelimitedString(dsNames, ","));
         } catch (SQLException e) {
             log.error("添加租户数据源失败", e);
