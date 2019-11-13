@@ -40,6 +40,7 @@ public class RoleController {
 
     }
 
+    private int num = 0;
     @ApiOperation(value="根据用户ID查询角色信息",httpMethod="POST",notes="根据参数列表查询角色信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name="userId",value="用户ID", dataType = "String",paramType = "query")
@@ -47,7 +48,12 @@ public class RoleController {
     @PostMapping("user/id")
     public ResultObject findRoleByUserId(@RequestParam("userId") String userId, @RequestParam("second") Integer second){
         List<Role> roles = this.roleService.findRoleByUserId(userId, second);
-
+        System.out.println("======================开启重试机制"+(num++)+"=============================");
+        try {
+            Thread.sleep(second);
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if(roles.size() > 0){
             log.info("{}", "根据用户ID查询角色信息成功");
             return ResultResponse.success("根据用户ID查询角色信息成功", roles);
