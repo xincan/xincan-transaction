@@ -39,8 +39,6 @@ public class RoleServiceImpl implements IRoleService {
         return this.roleMapper.selectPage(page, null);
     }
 
-    private int num = 0;
-
     @Override
     public List<Role> findRoleByUserId(String userId, Integer second) {
         List<String> roleIds = findUserRoleByUserId(userId)
@@ -52,15 +50,6 @@ public class RoleServiceImpl implements IRoleService {
         roleQueryWrapper.lambda().in(Role::getId, roleIds);
 
         List<Role> roles = this.roleMapper.selectList(roleQueryWrapper);
-
-        System.out.println("======================开启重试机制"+(num++)+"=============================");
-        try {
-            Thread.sleep(second);
-        }catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
         return roles;
     }
 

@@ -34,8 +34,8 @@ public class InitRunner implements ApplicationRunner {
     @Autowired
     private ITenantDatasourceService tenantDatasourceService;
 
-    @Resource
-    ShardingDataSource shardingDataSource;
+    @Autowired
+    private DataSource shardingDataSource;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

@@ -26,20 +26,34 @@ hystrix:
   shareSecurityContext: true
   command:
     default:
-      circuitBreaker:
-        sleepWindowInMilliseconds: 100000 # 熔断多少秒后去尝试恢复请求，默认5000ms
-        forceClosed: true
+#      circuitBreaker:
+#        sleepWindowInMilliseconds: 5000 # 熔断多少秒后去尝试恢复请求，默认5000ms
+#        forceClosed: true
       execution:
+        timeout:
+          enabled: true
         isolation:
           thread:
-            timeoutInMilliseconds: 600000 # 熔断器超时时间：默认1000ms
+            timeoutInMilliseconds: 13000 # 熔断器超时时间：默认1000ms
+
+# 当MaxAutoRetries=1, MaxAutoRetriesNextServer=2时: RetryCount = (1+1) * (2+1) = 6次
+# 当MaxAutoRetries=0, MaxAutoRetriesNextServer=1时: RetryCount = (0+1) * (1+1) = 2次
+# 也就是: RetryCount = (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1)
+
+# hystrix的超时时间要大于
+# timeoutInMilliseconds = (RibbonReadTimeout + RibbonConnectTimeout) * (RibbonMaxAutoRetries + 1) * (RibbonMaxAutoRetriesNextServer + 1)
+# timeoutInMilliseconds = (2000 + 1000) * (1 + 1) * (1 + 1) = 12000
+# 比较好，具体看需求进行配置。
+
+# timeoutInMilliseconds = (1 + MaxAutoRetries + MaxAutoRetriesNextServer) * ReadTimeout
+# timeoutInMilliseconds = （1 + 1 + 1） * 2000
 
 ribbon:
-  ReadTimeout: 12000          # 请求处理的超时时间
-  ConnectTimeout: 3000        # 请求连接的超时时间
-  MaxAutoRetries: 2           # 重试策略先尝试访问首选实例一次,失败后才会更换实例访问
-  MaxAutoRetriesNextServer: 2 # 更换实例访问的次数：通过参数设置为3, 所以会尝试更换3次实例进行重试
-  OkToRetryOnAllOperations: true
+  ReadTimeout: 2000               # 请求处理的超时时间
+  ConnectTimeout: 1000            # 请求连接的超时时间
+  MaxAutoRetries: 1               # 重试策略先尝试访问首选实例一次,失败后才会更换实例访问
+  MaxAutoRetriesNextServer: 1     # 更换实例访问的次数：通过参数设置为2, 所以会尝试更换2次实例进行重试
+  OkToRetryOnAllOperations: true  # 开启对请求进行行重试
 
 
 spring:
