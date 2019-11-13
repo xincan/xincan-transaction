@@ -1,4 +1,4 @@
-package com.xincan.transaction.config;
+package com.xincan.transaction.order.config;
 
 import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +29,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.xincan.transaction.server"))
+                .apis(RequestHandlerSelectors.basePackage("com.xincan.transaction.order.server"))
                 .paths(PathSelectors.any())
                 .build();
     }

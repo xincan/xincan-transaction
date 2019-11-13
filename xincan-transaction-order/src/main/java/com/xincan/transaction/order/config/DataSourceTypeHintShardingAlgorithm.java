@@ -1,4 +1,4 @@
-package com.xincan.transaction.config;
+package com.xincan.transaction.order.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.api.sharding.hint.HintShardingAlgorithm;
@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 /**
  * 设置ShardingJdbc使用自定义的datasource选择逻辑
- * 通过DynamicDataSourceAspect类将数据源的名称注入到shardingValue,从自定义的所有数据源中选择出拥有该名称的数据源
  */
 @Slf4j
 public class DataSourceTypeHintShardingAlgorithm implements HintShardingAlgorithm<String> {

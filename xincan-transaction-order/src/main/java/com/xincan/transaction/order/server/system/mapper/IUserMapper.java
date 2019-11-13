@@ -1,8 +1,8 @@
-package com.xincan.transaction.server.system.mapper;
+package com.xincan.transaction.order.server.system.mapper;
 
 import cn.com.hatech.common.data.universal.IBaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xincan.transaction.server.system.entity.User;
+import com.xincan.transaction.order.server.system.entity.User;
 import javafx.scene.control.Pagination;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,5 +19,12 @@ import java.util.Map;
  */
 @Mapper
 public interface IUserMapper extends IBaseMapper<User> {
+
+    /**
+     * 查询用户信息
+     * @param map
+     * @return
+     */
+    List<User> findAll(Page page, @Param("map") Map<String, Object> map);
 
 }
