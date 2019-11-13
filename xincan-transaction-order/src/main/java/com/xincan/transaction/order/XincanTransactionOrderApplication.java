@@ -1,6 +1,7 @@
 package com.xincan.transaction.order;
 
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
@@ -11,12 +12,12 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * 使用自定义的多个datasource,避免springboot自动将druidDataSource作为默认的datasource
+ * 使用sharding-jdbc的datasource,避免springboot自动将druidDataSource作为默认的datasource
  */
 @EnableTransactionManagement
 @SpringBootApplication(exclude = {
-        SpringBootConfiguration.class,
-        DataSourceAutoConfiguration.class})
+        DruidDataSourceAutoConfigure.class
+})
 public class XincanTransactionOrderApplication {
 
     public static void main(String[] args) {

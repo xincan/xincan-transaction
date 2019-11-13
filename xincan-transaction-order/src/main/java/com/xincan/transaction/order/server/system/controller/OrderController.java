@@ -49,9 +49,9 @@ public class OrderController {
 
     @ApiOperation(value = "查询租户数据源信息(obj)", httpMethod = "GET", notes = "根据查询条件分页查询租户数据源，返回对象集合")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="tenantName",value="租户名称", defaultValue="tenant2", dataType = "String",paramType = "path"),
+            @ApiImplicitParam(name="tenantName",value="租户名称", defaultValue="tenant0", dataType = "String",paramType = "path"),
 
-            @ApiImplicitParam(name="page",value="当前页数", defaultValue="0", dataType = "Integer",paramType = "query"),
+            @ApiImplicitParam(name="page",value="当前页数", defaultValue="1", dataType = "Integer",paramType = "query"),
             @ApiImplicitParam(name="limit",value="每页条数", defaultValue="10", dataType = "Integer",paramType = "query"),
 
             @ApiImplicitParam(name="id",value="租户数据源ID", dataType = "String",paramType = "query"),
@@ -74,9 +74,9 @@ public class OrderController {
     @ApiImplicitParams({
             @ApiImplicitParam(name="tenantName",value="租户名称", defaultValue="tenant2", dataType = "String",paramType = "path"),
 
-            @ApiImplicitParam(name="page",value="当前页数", defaultValue="0", dataType = "Integer",paramType = "query"),
+            @ApiImplicitParam(name="page",value="当前页数", defaultValue="1", dataType = "Integer",paramType = "query"),
             @ApiImplicitParam(name="limit",value="每页条数", defaultValue="10", dataType = "Integer",paramType = "query"),
-            @ApiImplicitParam(name="sortName",value="create_time", dataType = "String",paramType = "query"),
+            @ApiImplicitParam(name="sortName",value="排序字段名称",defaultValue="create_time", dataType = "String",paramType = "query"),
             @ApiImplicitParam(name="sortOrder",value="排序规则(ASC,DESC)，默认DESC", defaultValue = "DESC",dataType = "String",paramType = "query"),
             @ApiImplicitParam(name="startTime",value="开始时间", dataType = "Date",paramType = "query"),
             @ApiImplicitParam(name="endTime",value="结束时间", dataType = "Date",paramType = "query"),

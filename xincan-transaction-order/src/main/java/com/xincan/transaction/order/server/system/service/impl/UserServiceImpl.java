@@ -98,8 +98,8 @@ public class UserServiceImpl extends AbstractService<User> implements IUserServi
             Order order = new Order(null, StringUtils.isEmpty(orderName)?null:orderName);
             // 设置不自动提交sql
             connection.setAutoCommit(false);
-            // 租户 admin 对应数据表user
-            hintManager.setDatabaseShardingValue("admin");
+            // 租户 tenant0 对应数据表user
+            hintManager.setDatabaseShardingValue("tenant0");
             // 插入user表
             userMapper.insert(user);
             // 租户 tenant2 对应数据表order

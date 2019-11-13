@@ -21,54 +21,50 @@ eureka:
 spring:
   application:
     name: xincan-transaction-order
-  datasource:
-    druid:
-      # 设置tenant_datasource租户数据源信息表所在数据库连接
-      url: jdbc:mysql://localhost:3306/xincan-transaction?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&serverTimezone=GMT
-      username: root
-      password: 123456
-      # 下面为连接池的补充设置，应用到上面所有数据源中
-      # 初始化大小，最小，最大
-      initialSize: 5
-      minIdle: 5
-      maxActive: 20
-      # 配置获取连接等待超时的时间
-      maxWait: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-      timeBetweenEvictionRunsMillis: 60000
-      # 配置一个连接在池中最小生存的时间，单位是毫秒
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: SELECT 1 FROM DUAL
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      # 打开PSCache，并且指定每个连接上PSCache的大小
-      poolPreparedStatements: true
-      maxPoolPreparedStatementPerConnectionSize: 20
-      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
-      filters: stat,wall,slf4j
-      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
-      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-      # 合并多个DruidDataSource的监控数据
-      useGlobalDataSourceStat: true
-      # 配置监控界面
-      web-stat-filter:
-        enabled: true
-        url-pattern: /*
-        exclusions: /druid/*,*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico
-        session-stat-enable: true
-        session-stat-max-count: 10
-        principal-session-name: session_name
-        principal-cookie-name: cookie_name
-      stat-view-servlet:
-        enabled: true
-        url-pattern: /druid/*
-        reset-enable: false
-        login-username: xincan
-        login-password: xincan-0818
-        allow: 127.0.0.1,192.168.1.82
-        deny: 192.168.1.81
-      aop-patterns: com.xincan.transaction.server.*.*.*.*
+  shardingsphere:
+    # 使用sharding jdbc数据源
+    datasource:
+      # 设置主数据源名称, 服务启动后会从主数据源的tenant_datasource租户数据源信息表中读取所有租户数据源信息
+      names: main-datasource
+      main-datasource:
+        # 使用Druid连接池
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/xincan-transaction?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&serverTimezone=GMT
+        jdbc-url: ${spring.shardingsphere.datasource.main-datasource.url}
+        username: root
+        password: 123456
+        # 下面为druid连接池的补充设置，应用到上面所有数据源中
+        # 初始化大小，最小，最大
+        initialSize: 5
+        minIdle: 5
+        maxActive: 20
+        # 配置获取连接等待超时的时间
+        maxWait: 60000
+        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        timeBetweenEvictionRunsMillis: 60000
+        # 配置一个连接在池中最小生存的时间，单位是毫秒
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        # 打开PSCache，并且指定每个连接上PSCache的大小
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+        filters: stat,wall,slf4j
+        # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+        # 合并多个DruidDataSource的监控数据
+        useGlobalDataSourceStat: true
+    # 设置数据源切换策略
+    sharding:
+      default-database-strategy:
+        hint:
+          # 使用自定义的分库策略
+          algorithm-class-name: com.xincan.transaction.order.config.DataSourceTypeHintShardingAlgorithm
+
 
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
