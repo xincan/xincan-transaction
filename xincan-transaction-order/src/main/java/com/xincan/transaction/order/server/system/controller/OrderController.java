@@ -61,7 +61,7 @@ public class OrderController {
     public ResultObject findAllDataSource(@PathVariable("tenantName") String tenantName,
             @ApiParam(hidden = true) @RequestParam Map<String,Object> map) {
         try {
-        Page<TenantDatasource> pageInfo = tenantDatasourceService.findAll(tenantName, map);
+            Page<TenantDatasource> pageInfo = tenantDatasourceService.findAll(tenantName, map);
             log.info("{}", "查询租户数据源信息成功");
             return ResultResponse.success("查询租户数据源信息成功", pageInfo);
         } catch (Exception e) {

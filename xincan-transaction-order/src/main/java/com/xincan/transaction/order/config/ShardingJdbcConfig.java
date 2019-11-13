@@ -3,18 +3,30 @@ package com.xincan.transaction.order.config;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.xincan.transaction.config.DataSourceTypeHintShardingAlgorithm;
 import com.xincan.transaction.order.server.system.entity.TenantDatasource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.HintShardingStrategyConfiguration;
+import org.apache.shardingsphere.core.constant.properties.ShardingProperties;
+import org.apache.shardingsphere.core.constant.properties.ShardingPropertiesConstant;
+import org.apache.shardingsphere.core.database.DatabaseTypes;
 import org.apache.shardingsphere.core.exception.ShardingException;
+import org.apache.shardingsphere.core.execute.ShardingExecuteEngine;
+import org.apache.shardingsphere.core.execute.metadata.TableMetaDataInitializer;
+import org.apache.shardingsphere.core.metadata.ShardingMetaData;
+import org.apache.shardingsphere.core.metadata.datasource.ShardingDataSourceMetaData;
+import org.apache.shardingsphere.core.metadata.table.ShardingTableMetaData;
+import org.apache.shardingsphere.core.rule.ShardingRule;
+import org.apache.shardingsphere.core.spi.database.MySQLDatabaseType;
 import org.apache.shardingsphere.core.util.InlineExpressionParser;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource;
+import org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.metadata.CachedDatabaseMetaData;
+import org.apache.shardingsphere.shardingjdbc.jdbc.metadata.JDBCTableMetaDataConnectionManager;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.util.DataSourceUtil;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.util.PropertyUtil;
+import org.apache.shardingsphere.spi.database.DatabaseType;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +61,9 @@ public class ShardingJdbcConfig {
     @Resource(name="druidDataSource")
     DataSource druidDataSource;
 
+    @Autowired
+    PaginationInterceptor paginationInterceptor;
+
     /**
      * 获取自定义数据源
      * @return
@@ -82,6 +97,19 @@ public class ShardingJdbcConfig {
     }
 
     /**
+     * 自定义sharding-jdbc规则
+     * @return
+     */
+    public ShardingRuleConfiguration getShardingRuleConfiguration() {
+        ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
+        // 设置自定义分库逻辑
+        HintShardingStrategyConfiguration shardingStrategyConfiguration
+                = new HintShardingStrategyConfiguration(new DataSourceTypeHintShardingAlgorithm());
+        shardingRuleConfiguration.setDefaultDatabaseShardingStrategyConfig(shardingStrategyConfiguration);
+        return shardingRuleConfiguration;
+    }
+
+    /**
      * 设置主datasource为ShardingJdbc的datasource,
      * 需要指定该dataSource为主datasource,mybatis plus会查找该名称的bean
      * @return
@@ -92,13 +120,8 @@ public class ShardingJdbcConfig {
     public DataSource shardingDataSource() throws SQLException {
         Properties props = new Properties();
         props.setProperty("sql.show", "true");
-        ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
-        // 设置自定义分库逻辑
-        HintShardingStrategyConfiguration shardingStrategyConfiguration
-                = new HintShardingStrategyConfiguration(new DataSourceTypeHintShardingAlgorithm());
-        shardingRuleConfiguration.setDefaultDatabaseShardingStrategyConfig(shardingStrategyConfiguration);
         log.info("===========初始化shardingDataSource主数据源=============");
-        return ShardingDataSourceFactory.createDataSource(getDataSourceMap(), shardingRuleConfiguration, props);
+        return ShardingDataSourceFactory.createDataSource(getDataSourceMap(), getShardingRuleConfiguration(), props);
     }
 
     /**
@@ -109,7 +132,7 @@ public class ShardingJdbcConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource,PaginationInterceptor paginationInterceptor) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
         sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/*/*.xml"));
