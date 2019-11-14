@@ -21,6 +21,8 @@
     <!-- 公共版本号统一存放处，便于以后修改，全局替换版本号 -->
     <properties>
         <xincan-transaction.version>1.0-SNAPSHOT</xincan-transaction.version>
+        <!-- 数据处理配置 -->
+        <hatech-common-data.version>2.0.0</hatech-common-data.version>
         <!-- 构建项目编码格式配置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- java JDK版本配置 -->
@@ -130,6 +132,12 @@
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-transaction-xa-core</artifactId>
                 <version>${sharding-jdbc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.com.hatech.common.data</groupId>
+                <artifactId>hatech-common-data</artifactId>
+                <version>${hatech-common-data.version}</version>
             </dependency>
 
         </dependencies>
