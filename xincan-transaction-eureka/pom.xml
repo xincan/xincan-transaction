@@ -11,23 +11,27 @@
 
     <groupId>com.xincan.transaction</groupId>
     <artifactId>xincan-transaction-eureka</artifactId>
+    <packaging>jar</packaging>
     <version>${xincan-transaction.version}</version>
     <name>xincan-transaction-eureka</name>
-    <description>服务发现与注册中心</description>
+    <description>xincan-transaction-eureka服务发现与注册中心</description>
 
     <dependencies>
+
+        <!-- 集成springboot依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- 集成springboot测试依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- eureka依赖 -->
+        <!-- 集成eureka注册器依赖 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>

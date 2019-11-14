@@ -8,19 +8,31 @@
     <artifactId>xincan-transaction</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <description>xincan-transaction测试架构系统</description>
 
     <modules>
-        <module>../xincan-transaction-user</module>
-		<module>../xincan-transaction-role</module>
+
+        <!-- 服务注册与发现中心微服务 -->
         <module>../xincan-transaction-eureka</module>
-        <module>../xincan-transaction-order</module>
+
+        <!-- 统一鉴权微服务 -->
         <module>../xincan-transaction-oauth</module>
+
+        <!-- 用户微服务 -->
+        <module>../xincan-transaction-user</module>
+
+        <!-- 角色微服务 -->
+		<module>../xincan-transaction-role</module>
+
+        <!-- 订单微服务 -->
+        <module>../xincan-transaction-order</module>
+
     </modules>
 
 
     <!-- 公共版本号统一存放处，便于以后修改，全局替换版本号 -->
     <properties>
-        <xincan-transaction.version>1.0-SNAPSHOT</xincan-transaction.version>
+        <xincan-transaction.version>0.0.1-SNAPSHOT</xincan-transaction.version>
         <!-- 数据处理配置 -->
         <hatech-common-data.version>2.0.0</hatech-common-data.version>
         <!-- 构建项目编码格式配置 -->
@@ -54,7 +66,7 @@
 
         <dependencies>
 
-            <!-- 集成优化jar依赖 -->
+            <!-- 定义优化jar依赖 -->
             <dependency>
                 <groupId>io.spring.platform</groupId>
                 <artifactId>platform-bom</artifactId>
@@ -63,7 +75,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- 集成spring-boot版本依赖 -->
+            <!-- 定义spring-boot版本依赖 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-parent</artifactId>
@@ -72,7 +84,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- 集成spring-cloud版本依赖 -->
+            <!-- 定义spring-cloud版本依赖 -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -81,59 +93,63 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- 定义优化mysql依赖 -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector-java.version}</version>
             </dependency>
 
+            <!-- 定义mybatis-plus依赖 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus-boot-starter.version}</version>
             </dependency>
 
-            <!-- 集成阿里巴巴监听依赖 -->
+            <!-- 定义阿里巴巴监听依赖 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${druid-spring-boot-starter.version}</version>
             </dependency>
 
-            <!-- 集成lombok日志依赖 -->
+            <!-- 定义lombok依赖 -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
 
-            <!-- 集成RESTFUL API文档插件依赖 -->
+            <!-- 定义RESTFUL API文档插件依赖 -->
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
                 <version>${springfox-swagger2.version}</version>
             </dependency>
 
-            <!-- 集成RESTFUL API UI 自定义文档插件依赖 -->
+            <!-- 定义swagger-bootstrap-ui自定义文档插件依赖 -->
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>swagger-bootstrap-ui</artifactId>
                 <version>${swagger-bootstrap-ui.version}</version>
             </dependency>
 
-            <!-- 集成sharding-jdbc依赖 -->
+            <!-- 定义sharding-jdbc依赖 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
                 <version>${sharding-jdbc.version}</version>
             </dependency>
-            <!-- 集成sharding-jdbc xa分布式事务 依赖 -->
+
+            <!-- 定义sharding-jdbc xa分布式事务 依赖 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-transaction-xa-core</artifactId>
                 <version>${sharding-jdbc.version}</version>
             </dependency>
 
+            <!-- 定义自定义数据库处理依赖 -->
             <dependency>
                 <groupId>cn.com.hatech.common.data</groupId>
                 <artifactId>hatech-common-data</artifactId>
