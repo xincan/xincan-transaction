@@ -1,0 +1,155 @@
+
+# 服务端口配置
+server:
+  port: 8070
+  # 下面是配置undertow作为服务器的参数
+  undertow:
+    # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
+    io-threads: 8
+    # 阻塞任务线程池, 当执行类似servlet请求阻塞IO操作, undertow会从这个线程池中取得线程
+    # 它的值设置取决于系统线程执行任务的阻塞系数，默认值是IO线程数*8
+    worker-threads: 64
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分
+    buffer-size: 1024
+    # 是否分配的直接内存
+    direct-buffers: true
+
+
+## 服务注册配置
+eureka:
+  instance:
+    prefer-ip-address: true # 表示：将自己的ip注册到eureka
+    host: localhost
+    port: 8761
+  client:
+    service-url:
+      defaultZone: http://${eureka.instance.host}:${eureka.instance.port}/eureka/
+
+
+# 服务名称配置(同时测名称也是注册到eureka中心的名称)
+spring:
+  application:
+    name: xincan-transaction-oauth
+  # 数据源配置
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/xincan-transaction-oauth?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&serverTimezone=GMT
+      username: root
+      password: 123456
+      # 下面为连接池的补充设置，应用到上面所有数据源中
+      # 初始化大小，最小，最大
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall,slf4j
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 合并多个DruidDataSource的监控数据
+      useGlobalDataSourceStat: true
+      # 配置监控界面
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: /druid/*,*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico
+        session-stat-enable: true
+        session-stat-max-count: 10
+        principal-session-name: session_name
+        principal-cookie-name: cookie_name
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        login-username: root
+        login-password: 123456
+        allow: 127.0.0.1
+      aop-patterns: com.xincan.transaction.oauth.server.*.*.*
+
+  # 配置springboot扫描路径
+  resources:
+    static-locations: /META-INF/resources/,classpath:/resources/
+
+  # 配置redis连接
+  redis:
+    # Redis数据库索引（默认为0）
+    database: 0
+    # Redis服务器地址
+    host: localhost
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+    password:
+    jedis:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制） 默认 8
+        max-active: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+        max-wait: -1
+        # 连接池中的最大空闲连接 默认 8
+        max-idle: 8
+        # 连接池中的最小空闲连接 默认 0
+        min-idle: 0
+
+security:
+  oauth2:
+    sign: xincan
+  validity:
+    access-token-seconds: 43200      # token有效期自定义设置，默认12小时  60 * 60 * 12  43200
+    refresh-token-seconds: 604800    # 默认30天，这里修改 60 * 60 * 24 * 7  604800
+
+
+
+# swagger oauth配置:
+# 该配置需要在数据库中创建数据, 详见 com.xincan.transaction.oauth.config.swagger.Swagger2Config 中的说明
+swagger:
+  oauth:
+    clientId: swagger
+    clientSecret: 123456
+
+# MyBatisPlus设置
+# mybatis-plus mapper xml 文件地址
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*/*/*Mapper.xml
+  ##mybatis-plus type-aliases 文件地址
+  type-aliases-package: com.xincan.transaction.oauth.server.entity.**
+  # 以下配置均有默认值,可以不设置
+  global-config:
+    db-config:
+      #主键类 * AUTO: 数据库ID自增; INPUT: 用户输入ID; ID_WORKER: 全局唯一ID, Long类型的主键; ID_WORKER_STR: 字符串全局唯一ID; UUID: 全局唯一ID，UUID类型的主键; NONE: 该类型为未设置主键类型
+      id-type: ID_WORKER
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: false
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# 配置日志
+logging:
+  level:
+    cn.com.hatech: debug
+  file: ./log/${spring.application.name}/${spring.application.name}.log
+
+
+
+
+
+
+
+
+

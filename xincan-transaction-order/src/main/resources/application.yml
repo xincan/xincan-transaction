@@ -76,6 +76,23 @@ mybatis-plus:
     # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+# 鉴权配置
+security:
+  oauth2:
+    client:
+      clientId: ${spring.application.name}
+      clientSecret: 123456
+      user-authorization-uri: http://localhost:8070/oauth/authorize   # 获取code
+      access-token-uri: http://localhost:8070/oauth/token             # 获取token
+      grant-type: client_credentials,refresh_token,password
+      scope: server
+    resource:
+      id: xincan-transaction-oauth #鉴权服务clientId
+      token-info-uri: http://localhost:8070/oauth/check_token
+      user-info-uri: http://localhost:8070/hatech/principal           # 根据Token获取用户信息
+    authorization:
+      check-token-access: http://localhost:8070/oauth/check_token
+
 logging:
   level:
     com.xincan.transaction: debug

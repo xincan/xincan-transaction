@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xincan.transaction.oauth.server.mapper.user.IUserMapper">
+
+    <!-- 用户表user -->
+    <resultMap id="UserMap" type="com.xincan.transaction.oauth.server.entity.User">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <!-- 角色表role -->
+        <collection property="authorities" ofType="com.xincan.transaction.oauth.server.entity.Role">
+            <id column="role_id" jdbcType="BIGINT" property="id"/>
+            <result column="role_name" jdbcType="VARCHAR" property="name"/>
+        </collection>
+    </resultMap>
+
+    <select id="findByUsername" resultMap="UserMap">
+        SELECT
+        t1.id, password, username, phone, t2.role_id, t3.name role_name
+        from user t1
+				left join user_role t2
+				on t1.id = t2.user_id
+				left join role t3
+				on t2.role_id = t3.id
+				where username = #{username}
+    </select>
+
+    <select id="findByPhone" resultMap="UserMap">
+        SELECT
+            t1.id, password, username, phone, t2.role_id, t3.name role_name
+        from user t1
+                 left join user_role t2
+                           on t1.id = t2.user_id
+                 left join role t3
+                           on t2.role_id = t3.id
+        where phone = #{phone}
+    </select>
+
+
+</mapper>

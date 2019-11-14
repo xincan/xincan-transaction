@@ -14,6 +14,7 @@
 		<module>../xincan-transaction-role</module>
         <module>../xincan-transaction-eureka</module>
         <module>../xincan-transaction-order</module>
+        <module>../xincan-transaction-oauth</module>
     </modules>
 
 

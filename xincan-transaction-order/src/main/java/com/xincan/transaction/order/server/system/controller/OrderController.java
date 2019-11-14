@@ -18,10 +18,12 @@ import org.apache.shardingsphere.api.hint.HintManager;
 import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.apache.shardingsphere.transaction.core.TransactionTypeHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.DataSource;
+import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -49,19 +51,18 @@ public class OrderController {
 
     @ApiOperation(value = "查询租户数据源信息(obj)", httpMethod = "GET", notes = "根据查询条件分页查询租户数据源，返回对象集合")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="tenantName",value="租户名称", defaultValue="tenant0", dataType = "String",paramType = "path"),
-
             @ApiImplicitParam(name="page",value="当前页数", defaultValue="1", dataType = "Integer",paramType = "query"),
             @ApiImplicitParam(name="limit",value="每页条数", defaultValue="10", dataType = "Integer",paramType = "query"),
 
             @ApiImplicitParam(name="id",value="租户数据源ID", dataType = "String",paramType = "query"),
             @ApiImplicitParam(name="tenantName",value="租户名称", dataType = "String",paramType = "query"),
     })
-    @GetMapping("/selectDataSource/obj/{tenantName}")
-    public ResultObject findAllDataSource(@PathVariable("tenantName") String tenantName,
-            @ApiParam(hidden = true) @RequestParam Map<String,Object> map) {
+    @PreAuthorize("hasRole('ROLE_TENANT')")
+    @GetMapping("/selectDataSource/obj")
+    public ResultObject findAllDataSource(Principal principal,
+                                          @ApiParam(hidden = true) @RequestParam Map<String,Object> map) {
         try {
-            Page<TenantDatasource> pageInfo = tenantDatasourceService.findAll(tenantName, map);
+            Page<TenantDatasource> pageInfo = tenantDatasourceService.findAll(principal.getName(), map);
             log.info("{}", "查询租户数据源信息成功");
             return ResultResponse.success("查询租户数据源信息成功", pageInfo);
         } catch (Exception e) {
@@ -72,8 +73,6 @@ public class OrderController {
 
     @ApiOperation(value = "根据租户查询用户表信息(obj)", httpMethod = "GET", notes = "根据查询条件分页查询用户表信息，返回对象集合")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="tenantName",value="租户名称", defaultValue="tenant2", dataType = "String",paramType = "path"),
-
             @ApiImplicitParam(name="page",value="当前页数", defaultValue="1", dataType = "Integer",paramType = "query"),
             @ApiImplicitParam(name="limit",value="每页条数", defaultValue="10", dataType = "Integer",paramType = "query"),
             @ApiImplicitParam(name="sortName",value="排序字段名称",defaultValue="create_time", dataType = "String",paramType = "query"),
@@ -86,17 +85,18 @@ public class OrderController {
             @ApiImplicitParam(name="sex",value="用户性别", dataType = "Integer",paramType = "query"),
             @ApiImplicitParam(name="age",value="用户年龄", dataType = "Integer",paramType = "query")
     })
-    @GetMapping("/selectUser/obj/{tenantName}")
-    public ResultObject findAllUser(@PathVariable("tenantName") String tenantName,
+    @PreAuthorize("hasRole('ROLE_TENANT')")
+    @GetMapping("/selectUser/obj")
+    public ResultObject findAllUser(Principal principal,
             @ApiParam(hidden = true) @RequestParam Map<String,Object> map) {
         try {
-            Page<User> pageInfo = this.userService.findAll(tenantName, map);
-            log.info("{}", "查询员工信息成功");
-            return ResultResponse.success("查询员工成功", pageInfo);
+            Page<User> pageInfo = this.userService.findAll(principal.getName(), map);
+            log.info("{}", "查询用户信息成功");
+            return ResultResponse.success("查询用户信息成功", pageInfo);
         } catch (Exception e) {
-            log.info("查询员工信息失败", e);
+            log.info("查询用户信息失败", e);
         }
-        return ResultResponse.error("查询员工失败");
+        return ResultResponse.error("查询用户信息失败");
     }
 
 
