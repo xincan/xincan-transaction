@@ -26,27 +26,23 @@ hystrix:
   shareSecurityContext: true
   command:
     default:
-#      circuitBreaker:
-#        sleepWindowInMilliseconds: 5000 # 熔断多少秒后去尝试恢复请求，默认5000ms
-#        forceClosed: true
+      circuitBreaker:
+        sleepWindowInMilliseconds: 5000 # 熔断多少秒后去尝试恢复请求，默认5000ms
+        forceClosed: true
       execution:
         timeout:
-          enabled: true
+          enabled: true #如果enabled设置为false，则请求超时交给ribbon控制,为true,则超时作为熔断根据
         isolation:
           thread:
-            timeoutInMilliseconds: 13000 # 熔断器超时时间：默认1000ms
+            timeoutInMilliseconds: 8000 # 熔断器超时时间：默认1000ms
 
+# timeout.enabled=true时，# hystrix的超时时间要大于
 # 当MaxAutoRetries=1, MaxAutoRetriesNextServer=2时: RetryCount = (1+1) * (2+1) = 6次
 # 当MaxAutoRetries=0, MaxAutoRetriesNextServer=1时: RetryCount = (0+1) * (1+1) = 2次
-# 也就是: RetryCount = (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1)
+# 也就是: timeoutInMilliseconds = (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1) * ReadTimeout
 
-# hystrix的超时时间要大于
-# timeoutInMilliseconds = (RibbonReadTimeout + RibbonConnectTimeout) * (RibbonMaxAutoRetries + 1) * (RibbonMaxAutoRetriesNextServer + 1)
-# timeoutInMilliseconds = (2000 + 1000) * (1 + 1) * (1 + 1) = 12000
-# 比较好，具体看需求进行配置。
 
-# timeoutInMilliseconds = (1 + MaxAutoRetries + MaxAutoRetriesNextServer) * ReadTimeout
-# timeoutInMilliseconds = （1 + 1 + 1） * 2000
+# https://blog.csdn.net/zzzgd_666/article/details/83314833
 
 ribbon:
   ReadTimeout: 2000               # 请求处理的超时时间
