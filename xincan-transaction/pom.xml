@@ -2,6 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.xincan.transaction</groupId>
@@ -14,6 +15,9 @@
 
         <!-- 服务注册与发现中心微服务 -->
         <module>../xincan-transaction-eureka</module>
+
+        <!-- 网关微服务 -->
+        <module>../xincan-transaction-gateway</module>
 
         <!-- 统一鉴权微服务 -->
         <module>../xincan-transaction-oauth</module>
