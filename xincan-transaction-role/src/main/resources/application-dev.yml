@@ -16,7 +16,9 @@ eureka:
     # 如果该值设置太小了，则instance则很可能因为临时的网络抖动而被摘除掉。
     # 该值至少应该大于 leaseRenewalIntervalInSeconds
     lease-expiration-duration-in-seconds: 10
+
   client:
+    registry-fetch-interval-seconds: 5 #新服务上线拉取eureka server服务注册信息频率，默认是30秒
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${eureka.instance.port}/eureka/
 
