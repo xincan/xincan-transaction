@@ -1,20 +1,5 @@
-
-# 服务端口配置
 server:
-  port: 8070
-  # 下面是配置undertow作为服务器的参数
-  undertow:
-    # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
-    io-threads: 8
-    # 阻塞任务线程池, 当执行类似servlet请求阻塞IO操作, undertow会从这个线程池中取得线程
-    # 它的值设置取决于系统线程执行任务的阻塞系数，默认值是IO线程数*8
-    worker-threads: 64
-    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
-    # 每块buffer的空间大小,越小的空间被利用越充分
-    buffer-size: 1024
-    # 是否分配的直接内存
-    direct-buffers: true
-
+  port: 8000
 
 eureka:
   instance:
@@ -34,15 +19,47 @@ eureka:
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${eureka.instance.port}/eureka/
 
+feign:
+  hystrix:
+    enabled: true
 
-# 服务名称配置(同时测名称也是注册到eureka中心的名称)
+hystrix:
+  shareSecurityContext: true
+  command:
+    default:
+      circuitBreaker:
+        sleepWindowInMilliseconds: 5000 # 熔断多少秒后去尝试恢复请求，默认5000ms
+        forceClosed: true
+      execution:
+        timeout:
+          enabled: true #如果enabled设置为false，则请求超时交给ribbon控制,为true,则超时作为熔断根据
+        isolation:
+          thread:
+            timeoutInMilliseconds: 8000 # 熔断器超时时间：默认1000ms
+
+# timeout.enabled=true时，# hystrix的超时时间要大于
+# 当MaxAutoRetries=1, MaxAutoRetriesNextServer=2时: RetryCount = (1+1) * (2+1) = 6次
+# 当MaxAutoRetries=0, MaxAutoRetriesNextServer=1时: RetryCount = (0+1) * (1+1) = 2次
+# 也就是: timeoutInMilliseconds = (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1) * ReadTimeout
+
+
+# https://blog.csdn.net/zzzgd_666/article/details/83314833
+
+ribbon:
+  ReadTimeout: 2000               # 请求处理的超时时间
+  ConnectTimeout: 1000            # 请求连接的超时时间
+  MaxAutoRetries: 1               # 重试策略先尝试访问首选实例一次,失败后才会更换实例访问
+  MaxAutoRetriesNextServer: 1     # 更换实例访问的次数：通过参数设置为2, 所以会尝试更换2次实例进行重试
+  OkToRetryOnAllOperations: true  # 开启对请求进行行重试
+
+
 spring:
   application:
-    name: xincan-transaction-oauth
-  # 数据源配置
+    name: xincan-transaction-user
+
   datasource:
     druid:
-      url: jdbc:mysql://localhost:3306/xincan-transaction-oauth?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&serverTimezone=GMT
+      url: jdbc:mysql://localhost:3306/xincan-transaction?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&serverTimezone=GMT
       username: root
       password: 123456
       # 下面为连接池的补充设置，应用到上面所有数据源中
@@ -82,63 +99,24 @@ spring:
         enabled: true
         url-pattern: /druid/*
         reset-enable: false
-        login-username: root
-        login-password: 123456
-        allow: 127.0.0.1
-      aop-patterns: com.xincan.transaction.oauth.server.*.*.*
-
-  # 配置springboot扫描路径
-  resources:
-    static-locations: /META-INF/resources/,classpath:/resources/
-
-  # 配置redis连接
-  redis:
-    # Redis数据库索引（默认为0）
-    database: 0
-    # Redis服务器地址
-    host: localhost
-    # Redis服务器连接端口
-    port: 6379
-    # Redis服务器连接密码（默认为空）
-    password:
-    jedis:
-      pool:
-        # 连接池最大连接数（使用负值表示没有限制） 默认 8
-        max-active: 8
-        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
-        max-wait: -1
-        # 连接池中的最大空闲连接 默认 8
-        max-idle: 8
-        # 连接池中的最小空闲连接 默认 0
-        min-idle: 0
-
-security:
-  oauth2:
-    sign: xincan
-  validity:
-    access-token-seconds: 43200      # token有效期自定义设置，默认12小时  60 * 60 * 12  43200
-    refresh-token-seconds: 604800    # 默认30天，这里修改 60 * 60 * 24 * 7  604800
+        login-username: xincan
+        login-password: xincan-0818
+        allow: 127.0.0.1,192.168.1.82
+        deny: 192.168.1.81
+      aop-patterns: com.xincan.transaction.server.*.*.*.*
 
 
-
-# swagger oauth配置:
-# 该配置需要在数据库中创建数据, 详见 com.xincan.transaction.oauth.config.swagger.Swagger2Config 中的说明
-swagger:
-  oauth:
-    clientId: swagger
-    clientSecret: 123456
-
-# MyBatisPlus设置
-# mybatis-plus mapper xml 文件地址
 mybatis-plus:
-  mapper-locations: classpath*:mapper/*/*/*Mapper.xml
-  ##mybatis-plus type-aliases 文件地址
-  type-aliases-package: com.xincan.transaction.oauth.server.entity.**
+  mapper-locations: classpath:mapper/**/*.xml
   # 以下配置均有默认值,可以不设置
   global-config:
     db-config:
       #主键类 * AUTO: 数据库ID自增; INPUT: 用户输入ID; ID_WORKER: 全局唯一ID, Long类型的主键; ID_WORKER_STR: 字符串全局唯一ID; UUID: 全局唯一ID，UUID类型的主键; NONE: 该类型为未设置主键类型
-      id-type: ID_WORKER
+      id-type: UUID
+      #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
+      field-strategy: NOT_EMPTY
+      #数据库类型
+      db-type: MYSQL
   configuration:
     # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
     map-underscore-to-camel-case: true
@@ -147,17 +125,8 @@ mybatis-plus:
     # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-# 配置日志
 logging:
   level:
-    cn.com.hatech: debug
+    com.xincan.transaction: debug
   file: ./log/${spring.application.name}/${spring.application.name}.log
-
-
-
-
-
-
-
-
 
