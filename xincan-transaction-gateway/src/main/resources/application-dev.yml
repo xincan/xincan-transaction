@@ -22,7 +22,11 @@ eureka:
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${eureka.instance.port}/eureka/
 
-
+management:
+  endpoint:
+    web:
+      exposure:
+        include: '*'
 
 spring:
   application:
@@ -31,14 +35,23 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: true
           #开启小写验证，默认feign根据服务名查找都是用的全大写
           lowerCaseServiceId: true
 
       routes:
-        - id: XINCAN-TRANSACTION-USER
+        - id: xincan-transaction-user
           uri: lb://${spring.cloud.gateway.routes[0].id}
           predicates:
-            - Path=/user/**
+            - Path=/api/${spring.cloud.gateway.routes[0].id}/**
           filters:
-            - StripPrefix=1
+            - SwaggerHeaderFilter # 调用自定义过滤器
+            - StripPrefix=2
+        - id: xincan-transaction-role
+          uri: lb://${spring.cloud.gateway.routes[1].id}
+          predicates:
+            - Path=/api/${spring.cloud.gateway.routes[1].id}/**
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=2
+
