@@ -12,7 +12,7 @@ import java.util.Properties;
 @Data
 @NoArgsConstructor
 @Configuration
-@ConfigurationProperties(prefix = "spring.shardingsphere.datasource.main-datasource")
+@ConfigurationProperties(prefix = "spring.datasource.druid")
 public class DruidProperties {
 
     private String url;
@@ -44,6 +44,10 @@ public class DruidProperties {
 
     public DruidDataSource getDruidDataSource() throws SQLException {
         DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setUrl(url);
+        druidDataSource.setUsername(username);
+        druidDataSource.setPassword(password);
+
         druidDataSource.setInitialSize(initialSize);
         druidDataSource.setMinIdle(minIdle);
         druidDataSource.setMaxActive(maxActive);

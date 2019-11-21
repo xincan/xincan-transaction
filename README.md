@@ -102,3 +102,104 @@ xincan-transaction-order服务内不同数据库之间分布式事务. 分别向
 UserServiceImpl类中的testInsert方法首先向数据库xincan-transaction中的user用户表成功插入了未提交的数据, 但向数据库
 xincan-transaction-order中的user_order表插入数据时失败, 事务回滚. 此时数据库xincan-transaction中成功插入的
 数据也不会被提交.
+
+
+## 微服务间的分布式事务
+利用seata结合shardingsphere[实现分布式事务](https://shardingsphere.apache.org/document/current/cn/features/transaction/principle/base-transaction-seata/).
+
+### 一. 系统配置
+#### 1. 配置seata
+
+- application.yml配置
+    ```text
+    spring:
+      cloud:
+        alibaba:
+          seata:
+            # 配置分布式事务的分组名称
+            tx-service-group: raw-jdbc-group
+    ```
+
+- seata.conf配置. 
+    ```text
+    # 配置的是application.yml中微服务的名称
+    application.id = xincan-transaction-user
+    # 配置分布式事务的分组名称
+    transaction.service.group = raw-jdbc-group
+    ```
+
+- registry.conf配置.
+    ```text
+    registry {
+      # 使用eureka作为注册中心
+      type = "eureka"
+    
+      eureka {
+        serviceUrl = "http://localhost:8761/eureka"
+        #配置注册在eureka上的服务名
+        application = "seata-server"
+        weight = "1"
+      }
+    }
+    
+    config {
+      # 设置为文件类型的配置
+      type = "file"
+      # 配置文件指向file.conf
+      file {
+        name = "file.conf"
+      }
+    }
+    ```
+
+- file.conf配置
+    ```text
+    service {
+      #配置分布式事务分组和服务名
+      vgroup_mapping.raw-jdbc-group = "seata-server"
+      #配置seata server服务启动地址
+      seata-server.grouplist = "127.0.0.1:8091"
+    }
+    ```
+
+#### 2. 配置数据源
+
+- 如果项目使用spring boot的数据源, 需要用seata的数据源代理(DataSourceProxy)进行封装
+    ```text
+    @Primary
+    @Bean("dataSource")
+    public DataSource dataSource(DataSource druidDataSource) {
+        // 使用seata数据源代理封装datasource
+        return new DataSourceProxy(druidDataSource);
+    }
+    ```
+  
+- 如果项目使用sharding jdbc数据源, 需要将dataSourceMap中的数据源用seata数据源代理进行封装
+    ```text
+    DataSource druidDataSource = druidProperties.getDruidDataSource();
+    // 使用seata数据源代理封装datasource
+    DataSourceProxy dataSourceProxy = new DataSourceProxy(druidDataSource);
+    Map<String, DataSource> dataSourceMap = new HashMap<>();
+    // dataSourceMap使用封装的dataSourceProxy
+    dataSourceMap.put(dataSourceName, dataSourceProxy);
+    ```
+   
+#### 3. 使用全局代理
+
+- user服务的UserServiceImpl类中,使用@GlobalTransactional注解在执行feign调用的方法上. seata会在feign发送请求的header中
+带上一个名为"tx_xid"的全局事务id, 该id会传递到feign请求的服务上.
+    
+    注: 使用sharding jdbc的微服务中,需要设置Filter去拦截请求,并将全局事务id设置在seata的RootContext中
+    ```text
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest) servletRequest;
+        String xid = req.getHeader(RootContext.KEY_XID.toLowerCase());
+        boolean isBind = false;
+        if (StringUtils.isNotBlank(xid)) {
+            // 绑定seata事务id
+            RootContext.bind(xid);
+    ```
+  
+### 二. 示例
+调用user服务的接口, 执行GET请求 http://127.0.0.1:8000/user/testFeignTransaction. 
+user微服务利用feign分别调用order微服务和role微服务,如果在调用过程中在任意一个服务中发生错误,则其他已成功调用的服务会执行事务回滚

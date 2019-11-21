@@ -9,11 +9,8 @@ import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @description: TODO
@@ -62,6 +59,19 @@ public class RoleController {
         return ResultResponse.error("根据用户ID查询角色信息失败");
     }
 
-
+    @ApiOperation(value="测试分布式事务插入role",httpMethod="POST",notes="测试分布式事务插入role")
+    @ApiImplicitParams({
+    })
+    @PostMapping("testFeignInsertRole")
+    public ResultObject testFeignInsertRole() {
+        try {
+            Integer res = roleService.testFeignTransaction();
+            return ResultResponse.success("role插入成功", res);
+        }
+        catch (Exception e) {
+            log.error("role插入失败",e);
+        }
+        return ResultResponse.error("role插入失败");
+    }
 
 }

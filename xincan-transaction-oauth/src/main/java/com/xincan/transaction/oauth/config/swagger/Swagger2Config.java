@@ -1,5 +1,6 @@
 package com.xincan.transaction.oauth.config.swagger;
 
+import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ import java.util.*;
  */
 @Configuration
 @EnableSwagger2
+@EnableSwaggerBootstrapUI
 public class Swagger2Config {
 
     @Value("http://127.0.0.1:${server.port}/oauth")

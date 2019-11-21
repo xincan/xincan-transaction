@@ -2,11 +2,7 @@ package com.xincan.transaction.order.server.system.controller;
 
 import cn.com.hatech.common.data.result.ResultObject;
 import cn.com.hatech.common.data.result.ResultResponse;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xincan.transaction.order.server.system.entity.Order;
 import com.xincan.transaction.order.server.system.entity.TenantDatasource;
 import com.xincan.transaction.order.server.system.entity.User;
 import com.xincan.transaction.order.server.system.service.IOrderService;
@@ -14,20 +10,11 @@ import com.xincan.transaction.order.server.system.service.ITenantDatasourceServi
 import com.xincan.transaction.order.server.system.service.IUserService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shardingsphere.api.hint.HintManager;
-import org.apache.shardingsphere.transaction.core.TransactionType;
-import org.apache.shardingsphere.transaction.core.TransactionTypeHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.sql.DataSource;
 import java.security.Principal;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +32,9 @@ public class OrderController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IOrderService orderService;
 
     @Autowired
     private ITenantDatasourceService tenantDatasourceService;
@@ -114,6 +104,21 @@ public class OrderController {
             log.error("插入失败", e);
         }
         return ResultResponse.error("插入失败");
+    }
+
+    @ApiOperation(value="测试分布式事务插入order",httpMethod="POST",notes="测试分布式事务插入order")
+    @ApiImplicitParams({
+    })
+    @PostMapping("testFeignInsertOrder")
+    public ResultObject testFeignInsertOrder() {
+        try {
+            Integer res = orderService.testFeignTransaction();
+            return ResultResponse.success("order插入成功", res);
+        }
+        catch (Exception e) {
+            log.error("order插入失败", e);
+        }
+        return ResultResponse.error("order插入失败");
     }
 
 }

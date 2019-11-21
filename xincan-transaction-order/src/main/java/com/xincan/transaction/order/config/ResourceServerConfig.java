@@ -22,7 +22,8 @@ public class ResourceServerConfig  extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/order/test").permitAll();
+                // 允许未授权访问的请求路径
+                .antMatchers("/order/testFeignInsertOrder").permitAll();
     }
 
     @Override

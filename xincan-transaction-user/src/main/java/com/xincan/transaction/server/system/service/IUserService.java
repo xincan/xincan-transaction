@@ -17,4 +17,5 @@ public interface IUserService extends IBaseService<User> {
 
     JSONObject insertBatchTwo(Map<String, Object> map);
 
+    void testFeignTransaction();
 }

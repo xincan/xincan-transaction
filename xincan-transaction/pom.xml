@@ -30,7 +30,6 @@
 
         <!-- 订单微服务 -->
         <module>../xincan-transaction-order</module>
-
     </modules>
 
 
@@ -63,6 +62,10 @@
         <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
         <!-- sharding-jdbc版本配置 -->
         <sharding-jdbc.version>4.0.0-RC2</sharding-jdbc.version>
+        <!-- seata结合spring的版本配置 -->
+        <spring.seata.version>2.1.0.RELEASE</spring.seata.version>
+        <!-- seata版本配置 -->
+        <seata.version>0.9.0</seata.version>
     </properties>
 
     <!-- 定义依赖 -->
@@ -142,15 +145,47 @@
             <!-- 定义sharding-jdbc依赖 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>sharding-jdbc-core</artifactId>
+                <version>${sharding-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
                 <version>${sharding-jdbc.version}</version>
             </dependency>
 
-            <!-- 定义sharding-jdbc xa分布式事务 依赖 -->
+            <!-- 定义sharding-jdbc xa分布式事务依赖 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-transaction-xa-core</artifactId>
                 <version>${sharding-jdbc.version}</version>
+            </dependency>
+
+            <!-- 定义sharding-jdbc seata分布式事务依赖 -->
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>sharding-transaction-base-seata-at</artifactId>
+                <version>${sharding-jdbc.version}</version>
+            </dependency>
+
+            <!-- 定义seata分布式事务依赖 -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-seata</artifactId>
+                <version>${spring.seata.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>seata-all</artifactId>
+                        <groupId>io.seata</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- 定义seata为最新版本 -->
+            <dependency>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-all</artifactId>
+                <version>${seata.version}</version>
             </dependency>
 
             <!-- 定义自定义数据库处理依赖 -->

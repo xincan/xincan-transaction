@@ -22,6 +22,6 @@ public class InitRunner implements ApplicationRunner {
         /**
          * 刷新租户数据源
          */
-        tenantDatasourceService.renewDataSource();
+        tenantDatasourceService.refreshDataSource();
     }
 }

@@ -1,5 +1,6 @@
 package com.xincan.transaction.server.system.mapper;
 
+import cn.com.hatech.common.data.universal.IBaseMapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xincan.transaction.server.system.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,5 +13,8 @@ import org.apache.ibatis.annotations.Mapper;
  * @version: 1.0
  */
 @Mapper
-public interface IRoleMapper extends BaseMapper<Role> {
+public interface IRoleMapper extends IBaseMapper<Role> {
+
+    Integer save(Role role);
+
 }

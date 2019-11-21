@@ -1,5 +1,6 @@
 package com.xincan.transaction.server.system.mapper;
 
+import cn.com.hatech.common.data.universal.IBaseMapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xincan.transaction.server.system.entity.Role;
 import com.xincan.transaction.server.system.entity.UserRole;
@@ -13,5 +14,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @version: 1.0
  */
 @Mapper
-public interface IUserRoleMapper extends BaseMapper<UserRole> {
+public interface IUserRoleMapper extends IBaseMapper<UserRole> {
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface ITenantDatasourceService extends IBaseService<TenantDatasource> {
 
-    void renewDataSource();
+    void refreshDataSource();
 
     Page<TenantDatasource> findAll(String tenantName, Map<String, Object> map);
 

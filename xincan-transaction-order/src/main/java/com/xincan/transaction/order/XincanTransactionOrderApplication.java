@@ -18,7 +18,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableOAuth2Client
 @EnableTransactionManagement
 @SpringBootApplication(exclude = {
-        DruidDataSourceAutoConfigure.class
+        DataSourceAutoConfiguration.class,
+        SpringBootConfiguration.class
 })
 public class XincanTransactionOrderApplication {
 

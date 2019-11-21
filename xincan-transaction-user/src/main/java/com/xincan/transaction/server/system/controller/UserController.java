@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xincan.transaction.server.system.entity.User;
+import com.xincan.transaction.server.system.feign.IFOrderService;
 import com.xincan.transaction.server.system.feign.IFUserRoleService;
 import com.xincan.transaction.server.system.service.IUserService;
 import io.swagger.annotations.*;
@@ -38,6 +39,9 @@ public class UserController {
 
     @Autowired
     private IFUserRoleService userRoleService;
+
+    @Autowired
+    private IFOrderService orderService;
 
     @ApiOperation(value="添加员工信息",httpMethod="POST",notes="根据参数列表添加员工信息")
     @ApiImplicitParams({
@@ -218,11 +222,6 @@ public class UserController {
     }
 
 
-
-
-
-
-
     @ApiOperation(value="上传用户头像",httpMethod="POST",notes="上传用户头像")
     @ApiImplicitParams({
             @ApiImplicitParam(name="name",value="用户名称", required = true, dataType = "String",paramType = "query"),
@@ -238,5 +237,21 @@ public class UserController {
         return true;
 
     }
+
+    @ApiOperation(value="测试分布式事务",httpMethod="POST",notes="测试分布式事务")
+    @ApiImplicitParams({
+    })
+    @GetMapping("testFeignTransaction")
+    public ResultObject testFeignTransaction() {
+        try {
+            userService.testFeignTransaction();
+            return ResultResponse.success("测试分布式事务成功");
+        }
+        catch (Exception e){
+            log.error("测试分布式事务回滚",e);
+            return ResultResponse.error("测试分布式事务回滚");
+        }
+    }
+
 
 }

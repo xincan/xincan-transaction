@@ -4,12 +4,15 @@
 
     <resultMap id="BaseResultMap" type="com.xincan.transaction.server.system.entity.Role">
         <id column="id" jdbcType="VARCHAR" property="id"/>
-        <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="age" jdbcType="INTEGER" property="age"/>
-        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="role" jdbcType="VARCHAR" property="role"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
 
-
+    <insert id="save" parameterType="com.xincan.transaction.server.system.entity.Role">
+        insert into role (id, role, status, description, create_time)
+        values (#{id}, #{role}, #{status}, #{description}, #{createTime})
+    </insert>
 
 </mapper>

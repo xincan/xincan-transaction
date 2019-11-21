@@ -6,4 +6,6 @@ import com.xincan.transaction.order.server.system.entity.Order;
 
 public interface IOrderService extends IBaseService<Order> {
 
+    Integer testFeignTransaction();
+
 }

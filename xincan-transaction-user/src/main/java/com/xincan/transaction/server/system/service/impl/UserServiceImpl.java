@@ -5,8 +5,12 @@ import cn.com.hatech.common.data.universal.AbstractService;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xincan.transaction.server.system.entity.User;
+import com.xincan.transaction.server.system.feign.IFOrderService;
+import com.xincan.transaction.server.system.feign.IFRoleService;
 import com.xincan.transaction.server.system.mapper.IUserMapper;
 import com.xincan.transaction.server.system.service.IUserService;
+import io.seata.core.context.RootContext;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
@@ -38,6 +42,12 @@ public class UserServiceImpl extends AbstractService<User> implements IUserServi
 
     @Autowired
     SqlSessionTemplate sqlSessionTemplate;
+
+    @Autowired
+    IFOrderService orderService;
+
+    @Autowired
+    IFRoleService roleService;
 
     @Override
     public Page<User> findAll(Map<String, Object> map) {
@@ -136,4 +146,37 @@ public class UserServiceImpl extends AbstractService<User> implements IUserServi
         System.out.println(list.size());
         return list;
     }
+
+
+    /**
+     * 测试分布式事务
+     * 利用feign分别向role服务和order服务提交请求
+     */
+    @Override
+    @GlobalTransactional
+    public void testFeignTransaction() {
+        log.info("----------全局事务id: "+ RootContext.getXID());
+        // 是否全部成功
+        boolean flag = true;
+
+        // 请求order服务
+        JSONObject orderRes = orderService.testFeignInsertOrder();
+        if (orderRes.getInteger("code") != 200) {
+            flag = false;
+        }
+        log.info("order服务返回结果: {}", JSONObject.toJSONString(orderRes));
+
+        // 请求role服务
+        JSONObject roleRes = roleService.testFeignInsertRole();
+        if (roleRes.getInteger("code") != 200) {
+            flag = false;
+        }
+        log.info("role服务返回结果: {}", JSONObject.toJSONString(roleRes));
+
+        if (!flag) {
+            throw new RuntimeException("事务回滚");
+        }
+    }
+
+
 }
