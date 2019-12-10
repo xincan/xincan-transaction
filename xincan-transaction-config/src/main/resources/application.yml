@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev # 当前设置开发环境
+    active: zone1
 
 management:
   endpoints:
