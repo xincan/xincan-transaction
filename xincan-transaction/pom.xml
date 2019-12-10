@@ -35,7 +35,6 @@
 
     <!-- 公共版本号统一存放处，便于以后修改，全局替换版本号 -->
     <properties>
-        <xincan-transaction.version>0.0.1-SNAPSHOT</xincan-transaction.version>
         <!-- 数据处理配置 -->
         <hatech-common-data.version>2.0.0</hatech-common-data.version>
         <!-- 构建项目编码格式配置 -->
