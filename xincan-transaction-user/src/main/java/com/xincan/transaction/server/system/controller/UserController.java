@@ -99,7 +99,7 @@ public class UserController {
     @ApiOperation(value = "查询员工信息(obj)", httpMethod = "GET", notes = "根据查询条件分页查询员工信息，返回对象集合")
     @ApiImplicitParams({
             @ApiImplicitParam(name="page",value="当前页数", defaultValue="0", dataType = "Integer",paramType = "query"),
-            @ApiImplicitParam(name="size",value="每页条数", defaultValue="10", dataType = "Integer",paramType = "query"),
+            @ApiImplicitParam(name="limit",value="每页条数", defaultValue="10", dataType = "Integer",paramType = "query"),
             @ApiImplicitParam(name="sortName",value="排序字段名称", dataType = "String",paramType = "query"),
             @ApiImplicitParam(name="sortOrder",value="排序规则(ASC,DESC)，默认DESC", defaultValue = "DESC",dataType = "String",paramType = "query"),
             @ApiImplicitParam(name="startTime",value="开始时间", dataType = "Date",paramType = "query"),
@@ -124,7 +124,7 @@ public class UserController {
     @ApiOperation(value = "查询员工信息(map)", httpMethod = "GET", notes = "根据查询条件分页查询员工信息，返回list map集合")
     @ApiImplicitParams({
             @ApiImplicitParam(name="page",value="当前页数", defaultValue="0", dataType = "Integer",paramType = "query"),
-            @ApiImplicitParam(name="size",value="每页条数", defaultValue="10", dataType = "Integer",paramType = "query"),
+            @ApiImplicitParam(name="limit",value="每页条数", defaultValue="10", dataType = "Integer",paramType = "query"),
             @ApiImplicitParam(name="sortName",value="排序字段名称", dataType = "String",paramType = "query"),
             @ApiImplicitParam(name="sortOrder",value="排序规则(ASC,DESC)，默认DESC", defaultValue = "DESC",dataType = "String",paramType = "query"),
             @ApiImplicitParam(name="startTime",value="开始时间", dataType = "Date",paramType = "query"),

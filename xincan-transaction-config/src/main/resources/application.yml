@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: zone1
+    active: dev
 
 management:
   endpoints:

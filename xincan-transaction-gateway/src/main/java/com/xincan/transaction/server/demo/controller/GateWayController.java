@@ -1,4 +1,4 @@
-package com.xincan.transaction.controller;
+package com.xincan.transaction.server.demo.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

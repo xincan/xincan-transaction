@@ -1,4 +1,4 @@
-package com.xincan.transaction.controller;
+package com.xincan.transaction.server.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version: 1.0
  */
 @RestController
+@RequestMapping("/config")
 public class AutoConfigController {
 
 
@@ -29,7 +30,6 @@ public class AutoConfigController {
     @GetMapping("/info")
     public Object getEurekaServerInfo(){
         return eurekaClientConfigBean.getServiceUrl();
-//        return "asdfasdf";
     }
 
 }
