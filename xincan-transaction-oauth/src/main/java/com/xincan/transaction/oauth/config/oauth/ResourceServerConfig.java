@@ -2,7 +2,6 @@ package com.xincan.transaction.oauth.config.oauth;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -32,7 +31,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         // 过滤不需要认证的资源
                 http
                 .authorizeRequests()
-                .antMatchers("/hatech/**").permitAll();
+                .antMatchers("/user/login").permitAll();
     }
 
     @Override

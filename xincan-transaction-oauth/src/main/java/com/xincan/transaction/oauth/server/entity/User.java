@@ -4,6 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,14 +16,18 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("user")
+@Builder
 public class User implements UserDetails, Serializable {
 
 	// 此处使用snowflake分布式主键算法
-	@TableId(value = "id", type = IdType.ID_WORKER)
-	private Long id;
+	@TableId(value = "id", type = IdType.ID_WORKER_STR)
+	private String id;
 
-	@TableField("username")
+	@TableField("name")
 	private String username;
 
 	@TableField("password")
@@ -27,57 +36,22 @@ public class User implements UserDetails, Serializable {
 	@TableField("phone")
 	private String phone;
 
+	@TableField(exist = false)
+	@JsonIgnore
 	private List<Role> authorities;
 
-
-	public User() {}
+	@TableField(exist = false)
+	@JsonIgnore
+	private List<Tenant> tenants;
 
 	public User(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
-	}
-
-	public void setAuthorities(List<Role> authorities) {
-		this.authorities = authorities;
-	}
-
-	@Override
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	@Override
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
 	}
 
 	@Override
@@ -99,6 +73,5 @@ public class User implements UserDetails, Serializable {
 	public boolean isEnabled() {
 		return true;
 	}
-
 
 }

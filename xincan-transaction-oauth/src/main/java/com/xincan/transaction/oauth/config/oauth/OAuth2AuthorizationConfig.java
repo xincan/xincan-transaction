@@ -1,6 +1,7 @@
 package com.xincan.transaction.oauth.config.oauth;
 
 import com.xincan.transaction.oauth.config.redis.CustomRedisTokenStore;
+import com.xincan.transaction.oauth.server.mapper.oauth.IClientDetailMapper;
 import com.xincan.transaction.oauth.server.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,27 +9,26 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
-import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -105,6 +105,18 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
     /**
+     * 定义的主数据源
+     */
+    @Value("${spring.datasource.name}")
+    private String mainDataSource;
+
+    /**
+     * 注入自定义client details查询
+     */
+    @Resource
+    private IClientDetailMapper clientDetailMapper;
+
+    /**
      * @Method
      * @Author Xincan
      * @Version  1.0
@@ -133,7 +145,7 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
      */
     @Bean
     public ClientDetailsService clientDetails() {
-        return new JdbcClientDetailsService(dataSource);
+        return new MybatisClientDetailsService(dataSource, clientDetailMapper, mainDataSource);
     }
 
 
@@ -167,6 +179,11 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
         return new JwtTokenStore(jwtAccessTokenConverter());
     }
 
+    /**
+     * 注入jwt token增强器
+     */
+    @Autowired
+    public TokenEnhancer jwtTokenEnhancer;
 
     /**
      * @Method
@@ -241,11 +258,19 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception{
+        // jwt token 增强链
+        TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+        List<TokenEnhancer> enhancerList = new ArrayList<>();
+        enhancerList.add(jwtTokenEnhancer);
+        enhancerList.add(jwtAccessTokenConverter());
+        enhancerChain.setTokenEnhancers(enhancerList);
+
         endpoints
                 .tokenStore(tokenStore())
-                .userDetailsService(userDetailsServiceImpl)
                 .authenticationManager(authenticationManager)
-                .accessTokenConverter(jwtAccessTokenConverter())
+                .userDetailsService(userDetailsServiceImpl)
+                // 引入自定义token字段
+                .tokenEnhancer(enhancerChain)
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
                 .reuseRefreshTokens(true);
     }
@@ -271,7 +296,6 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
                 //检查token的策略
                 .checkTokenAccess("isAuthenticated()")
                 .allowFormAuthenticationForClients(); // 支持表单验证
-
     }
 
 }

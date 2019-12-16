@@ -4,30 +4,45 @@
 
     <!-- 用户表user -->
     <resultMap id="UserMap" type="com.xincan.transaction.oauth.server.entity.User">
-        <id column="id" jdbcType="BIGINT" property="id"/>
+        <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
-        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="name" jdbcType="VARCHAR" property="username"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <!-- 角色表role -->
         <collection property="authorities" ofType="com.xincan.transaction.oauth.server.entity.Role">
-            <id column="role_id" jdbcType="BIGINT" property="id"/>
+            <id column="role_id" jdbcType="VARCHAR" property="id"/>
             <result column="role_name" jdbcType="VARCHAR" property="name"/>
         </collection>
     </resultMap>
 
+    <!-- 租户表 -->
+    <resultMap id="TenantMap" type="com.xincan.transaction.oauth.server.entity.Tenant">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="tenant_name" jdbcType="VARCHAR" property="tenantName" />
+    </resultMap>
+
     <select id="findByUsername" resultMap="UserMap">
         SELECT
-        t1.id, password, username, phone, t2.role_id, t3.name role_name
+        t1.id, password, t1.name, phone, t2.role_id, t3.name role_name
         from user t1
 				left join user_role t2
 				on t1.id = t2.user_id
 				left join role t3
 				on t2.role_id = t3.id
-				where username = #{username}
+				where t1.name = #{username}
+    </select>
+
+    <select id="findTenantByUserId" resultMap="TenantMap">
+        select t2.id, t2.tenant_name
+            from user_tenant t1
+            left join tenant t2
+            on t1.tenant_id = t2.id
+            where t1.user_id = #{userId}
     </select>
 
     <select id="findByPhone" resultMap="UserMap">
         SELECT
-            t1.id, password, username, phone, t2.role_id, t3.name role_name
+            t1.id, password, name, phone, t2.role_id, t3.name role_name
         from user t1
                  left join user_role t2
                            on t1.id = t2.user_id

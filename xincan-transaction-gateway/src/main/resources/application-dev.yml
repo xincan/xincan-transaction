@@ -40,18 +40,17 @@ spring:
           lowerCaseServiceId: true
 
       routes:
-        - id: xincan-transaction-user
+        - id: xincan-transaction-oauth
           uri: lb://${spring.cloud.gateway.routes[0].id}
           predicates:
             - Path=/api/${spring.cloud.gateway.routes[0].id}/**
           filters:
-            - SwaggerHeaderFilter # 调用自定义过滤器
+            - SwaggerHeaderFilter
             - StripPrefix=2
-        - id: xincan-transaction-role
+        - id: xincan-transaction-system
           uri: lb://${spring.cloud.gateway.routes[1].id}
           predicates:
             - Path=/api/${spring.cloud.gateway.routes[1].id}/**
           filters:
             - SwaggerHeaderFilter
             - StripPrefix=2
-

@@ -1,10 +1,12 @@
 package com.xincan.transaction.oauth.server.mapper.user;
 
+import cn.com.hatech.common.data.universal.IBaseMapper;
+import com.xincan.transaction.oauth.server.entity.Tenant;
 import com.xincan.transaction.oauth.server.entity.User;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import feign.Param;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @Copyright (C), 2018,北京同创永益科技发展有限公司
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Repository;
  * @Version: 1.0
  */
 @Mapper
-public interface IUserMapper extends BaseMapper<User> {
+public interface IUserMapper extends IBaseMapper<User> {
 
     /**
      * 按用户名查询用户信息
@@ -24,6 +26,13 @@ public interface IUserMapper extends BaseMapper<User> {
      * @return
      */
     User findByUsername(@Param("username") String username);
+
+    /**
+     * 按用户查询所属租户信息
+     * @param userId
+     * @return
+     */
+    List<Tenant> findTenantByUserId(@Param("userId") String userId);
 
     /**
      * 按手机号查询用户信息

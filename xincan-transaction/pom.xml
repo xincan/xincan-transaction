@@ -25,14 +25,8 @@
         <!-- 统一鉴权微服务 -->
         <module>../xincan-transaction-oauth</module>
 
-        <!-- 用户微服务 -->
-        <module>../xincan-transaction-user</module>
-
-        <!-- 角色微服务 -->
-		<module>../xincan-transaction-role</module>
-
-        <!-- 订单微服务 -->
-        <module>../xincan-transaction-order</module>
+        <!-- 认证中心微服务 -->
+        <module>../xincan-transaction-system</module>
     </modules>
 
 
@@ -70,6 +64,8 @@
         <spring.seata.version>2.1.0.RELEASE</spring.seata.version>
         <!-- seata版本配置 -->
         <seata.version>0.9.0</seata.version>
+        <!-- jjwt自定义token解析版本配置 -->
+        <jjwt.token.wersion>0.9.1</jjwt.token.wersion>
     </properties>
 
     <!-- 定义依赖 -->
@@ -197,6 +193,13 @@
                 <groupId>cn.com.hatech.common.data</groupId>
                 <artifactId>hatech-common-data</artifactId>
                 <version>${hatech-common-data.version}</version>
+            </dependency>
+
+            <!-- 定义自定义token解析依赖 -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.token.wersion}</version>
             </dependency>
 
         </dependencies>

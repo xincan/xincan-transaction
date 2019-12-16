@@ -41,13 +41,27 @@ eureka:
 spring:
   application:
     name: xincan-transaction-oauth
+
+  cloud:
+    alibaba:
+      seata:
+        # 设置分布式事务的分组名称, 此分组名称需要和file.conf中的server.vgroup_mapping配置一致
+        tx-service-group: raw-jdbc-group
+
+  redis:
+    database: 0
+    host: 192.168.1.186
+    port: 6379
+
   # 数据源配置
   datasource:
+    name: main-datasource
     druid:
-      url: jdbc:mysql://localhost:3306/xincan-transaction-oauth?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&serverTimezone=GMT
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://192.168.1.186:3306/xincan-transaction?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&serverTimezone=GMT
       username: root
       password: 123456
-      # 下面为连接池的补充设置，应用到上面所有数据源中
+      # 下面为druid连接池的补充设置，应用到上面所有数据源中
       # 初始化大小，最小，最大
       initialSize: 5
       minIdle: 5
@@ -71,48 +85,6 @@ spring:
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       # 合并多个DruidDataSource的监控数据
       useGlobalDataSourceStat: true
-      # 配置监控界面
-      web-stat-filter:
-        enabled: true
-        url-pattern: /*
-        exclusions: /druid/*,*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico
-        session-stat-enable: true
-        session-stat-max-count: 10
-        principal-session-name: session_name
-        principal-cookie-name: cookie_name
-      stat-view-servlet:
-        enabled: true
-        url-pattern: /druid/*
-        reset-enable: false
-        login-username: root
-        login-password: 123456
-        allow: 127.0.0.1
-      aop-patterns: com.xincan.transaction.oauth.server.*.*.*
-
-  # 配置springboot扫描路径
-  resources:
-    static-locations: /META-INF/resources/,classpath:/resources/
-
-  # 配置redis连接
-  redis:
-    # Redis数据库索引（默认为0）
-    database: 0
-    # Redis服务器地址
-    host: localhost
-    # Redis服务器连接端口
-    port: 6379
-    # Redis服务器连接密码（默认为空）
-    password:
-    jedis:
-      pool:
-        # 连接池最大连接数（使用负值表示没有限制） 默认 8
-        max-active: 8
-        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
-        max-wait: -1
-        # 连接池中的最大空闲连接 默认 8
-        max-idle: 8
-        # 连接池中的最小空闲连接 默认 0
-        min-idle: 0
 
 security:
   oauth2:
@@ -120,8 +92,6 @@ security:
   validity:
     access-token-seconds: 43200      # token有效期自定义设置，默认12小时  60 * 60 * 12  43200
     refresh-token-seconds: 604800    # 默认30天，这里修改 60 * 60 * 24 * 7  604800
-
-
 
 # swagger oauth配置:
 # 该配置需要在数据库中创建数据, 详见 com.xincan.transaction.oauth.config.swagger.Swagger2Config 中的说明

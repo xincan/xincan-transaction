@@ -8,4 +8,8 @@
 out
 gen
 log/
+logs/
+transaction-logs/
+mvnw
+mvnw.cmd
 src/main/java/META-INF/
