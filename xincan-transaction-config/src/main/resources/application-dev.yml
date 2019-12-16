@@ -5,6 +5,10 @@ server:
 spring:
   application:
     name: xincan-transaction-config
+  # 配置国际化文件的路径
+  messages:
+    # 多类配置化文件可以用逗号隔开 例如： i18n.messages, i18n.login
+    basename: i18n.messages
 
 eureka:
   instance:
