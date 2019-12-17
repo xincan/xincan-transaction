@@ -27,6 +27,10 @@
 
         <!-- 认证中心微服务 -->
         <module>../xincan-transaction-rbac</module>
+
+        <!-- 认证中心微服务 -->
+        <module>../xincan-transaction-log</module>
+
     </modules>
 
 
