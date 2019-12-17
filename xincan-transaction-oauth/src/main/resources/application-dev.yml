@@ -42,12 +42,6 @@ spring:
   application:
     name: xincan-transaction-oauth
 
-  cloud:
-    alibaba:
-      seata:
-        # 设置分布式事务的分组名称, 此分组名称需要和file.conf中的server.vgroup_mapping配置一致
-        tx-service-group: raw-jdbc-group
-
   redis:
     database: 0
     host: 192.168.1.186
@@ -55,7 +49,6 @@ spring:
 
   # 数据源配置
   datasource:
-    name: main-datasource
     druid:
       driver-class-name: com.mysql.jdbc.Driver
       url: jdbc:mysql://192.168.1.186:3306/xincan-transaction?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&autoReconnect=true&failOverReadOnly=false&allowMultiQueries=true&serverTimezone=GMT
@@ -85,6 +78,24 @@ spring:
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       # 合并多个DruidDataSource的监控数据
       useGlobalDataSourceStat: true
+      # 配置监控界面
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: /druid/*,*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico
+        session-stat-enable: true
+        session-stat-max-count: 10
+        principal-session-name: session_name
+        principal-cookie-name: cookie_name
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        login-username: xincan
+        login-password: xincan-0818
+        allow: 127.0.0.1,192.168.1.82
+        deny: 192.168.1.81
+      aop-patterns: com.xincan.transaction.server.*.*.*.*
 
 security:
   oauth2:

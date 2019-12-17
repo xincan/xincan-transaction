@@ -26,41 +26,47 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /**
+     * 注入UserDetailsService实现对象
+     */
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
+    /**
+     * 密码编码解码器
+     * @return
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * 鉴权管理bean
+     * @return
+     * @throws Exception
+     */
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * 使用自定义的UserDetailsService实现和密码
+     * @param auth
+     * @throws Exception
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder());
     }
 
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//
-//        System.out.println("--------web security------------------------------------------------------");
-//
-//        http.requestMatchers()
-//                .anyRequest()
-//                .and().authorizeRequests()
-//                //.antMatchers("/admin/**").authenticated()
-//                .antMatchers("/oauth/**").permitAll()
-////                .antMatchers("/admin/**").hasRole("ADMIN")///admin/**的URL都需要有超级管理员角色，如果使用.hasAuthority()方法来配置，需要在参数中加上ROLE_,如下.hasAuthority("ROLE_超级管理员")
-//                .anyRequest().authenticated()//其他的路径都是登录后即可访问
-//                .and().csrf().disable();
-//
-//    }
-
+    /**
+     * url拦截配置
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //不拦截 oauth 开放的资源

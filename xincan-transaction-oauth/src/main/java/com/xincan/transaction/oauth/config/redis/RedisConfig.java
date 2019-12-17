@@ -14,7 +14,9 @@ import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 
-
+/**
+ * redis 连接配置
+ */
 @Configuration
 @ConditionalOnClass(RedisClient.class)
 public class RedisConfig {
@@ -22,22 +24,10 @@ public class RedisConfig {
     @Autowired
     private RedisProperties redisProperties;
 
-//    @Bean
-//    @ConditionalOnMissingBean(RedisConnectionFactory.class)
-//    public JedisConnectionFactory redisConnectionFactory() {
-//        RedisStandaloneConfiguration standaloneConfiguration = getRedisStandaloneConfiguration();
-//        return new JedisConnectionFactory(standaloneConfiguration);
-//    }
-//
-//    private RedisStandaloneConfiguration getRedisStandaloneConfiguration() {
-//        RedisStandaloneConfiguration standaloneConfiguration = new RedisStandaloneConfiguration();
-//        standaloneConfiguration.setHostName(redisProperties.getHost());
-//        standaloneConfiguration.setPort(redisProperties.getPort());
-//        standaloneConfiguration.setPassword(RedisPassword.of(redisProperties.getPassword()));
-//        standaloneConfiguration.setDatabase(redisProperties.getDatabase());
-//        return standaloneConfiguration;
-//    }
-
+    /**
+     * 使用jedis连接到redis服务
+     * @return
+     */
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
