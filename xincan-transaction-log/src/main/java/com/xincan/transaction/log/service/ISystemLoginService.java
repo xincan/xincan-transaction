@@ -1,6 +1,7 @@
 package com.xincan.transaction.log.service;
 
 import cn.com.hatech.common.data.universal.IBaseService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xincan.transaction.log.entity.SystemLog;
 
 /**
@@ -12,4 +13,6 @@ import com.xincan.transaction.log.entity.SystemLog;
   */
 
 public interface ISystemLoginService extends IBaseService<SystemLog> {
+
+    IPage<SystemLog> find(SystemLog systemLog);
 }

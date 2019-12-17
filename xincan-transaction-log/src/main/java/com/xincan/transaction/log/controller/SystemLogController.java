@@ -1,11 +1,11 @@
 package com.xincan.transaction.log.controller;
 
 import com.xincan.transaction.log.entity.SystemLog;
+import com.xincan.transaction.log.enums.ESystemOperationLogType;
 import com.xincan.transaction.log.result.ResponseResult;
 import com.xincan.transaction.log.result.ResultObject;
 import com.xincan.transaction.log.service.ISystemLoginService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @create: 2019/12/16 16:14
  * @version: 1.0
  */
-@Api(value = "/test", tags = {"日志管理"})
+@Api(value = "日志管理", tags = {"日志管理"})
 @RestController
 @RequestMapping("system")
 public class SystemLogController {
@@ -34,10 +34,9 @@ public class SystemLogController {
         this.systemLoginService = systemLoginService;
     }
 
-    @ApiOperation(value="添加日志信息",httpMethod="GET",notes="根据参数添加日志信息")
-    @GetMapping("/insert")
+    @ApiOperation(value="添加日志信息",httpMethod="POST",notes="根据参数添加日志信息")
+    @PostMapping("/insert")
     public ResultObject<SystemLog> insert(@ApiParam @Validated SystemLog systemLog) {
-        System.out.println(systemLog);
         Integer num = this.systemLoginService.insert(systemLog);
         if(num > 0) {
             return ResponseResult.success("添加日志信息成功", systemLog);
