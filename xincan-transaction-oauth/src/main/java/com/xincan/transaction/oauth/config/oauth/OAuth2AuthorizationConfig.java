@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -102,13 +103,7 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
      * @Date 2019/5/14 16:36
      */
     @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
-
-    /**
-     * 定义的主数据源
-     */
-    @Value("${spring.datasource.name}")
-    private String mainDataSource;
+    private UserDetailsService userDetailsServiceImpl;
 
     /**
      * 注入自定义client details查询
@@ -145,7 +140,7 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
      */
     @Bean
     public ClientDetailsService clientDetails() {
-        return new MybatisClientDetailsService(dataSource, clientDetailMapper, mainDataSource);
+        return new MybatisClientDetailsService(dataSource, clientDetailMapper);
     }
 
 

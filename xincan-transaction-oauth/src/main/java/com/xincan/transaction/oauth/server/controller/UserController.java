@@ -8,6 +8,7 @@ import com.xincan.transaction.oauth.server.service.IUserService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -26,29 +27,10 @@ public class UserController {
     @Autowired
     IUserService userService;
 
-
     @ApiOperation(value="用户登录",httpMethod="POST",notes="用户登录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="header_username",value="Basic Auth用户名",defaultValue = "xincan-transaction-oauth",required = true, dataType = "String",paramType = "header"),
-            @ApiImplicitParam(name="header_password",value="Basic Auth密码",defaultValue = "123456",required = true, dataType = "String",paramType = "header"),
-
-            @ApiImplicitParam(name="grant_type",value="授权类型",defaultValue = "password",required = true, dataType = "String",paramType = "query"),
-            @ApiImplicitParam(name="scope",value="授权范围",defaultValue = "server",required = true, dataType = "String",paramType = "query"),
-            @ApiImplicitParam(name="username",value="用户名",defaultValue = "user1",required = true, dataType = "String",paramType = "query"),
-            @ApiImplicitParam(name="password",value="密码",defaultValue = "123456",required = true, dataType = "String",paramType = "query"),
-    })
     @PostMapping("/login")
-    public Mono login(@ApiParam(hidden = true) HttpServletRequest request,
-                                                   @ApiParam(hidden = true) @RequestParam Map<String, String> parameters) {
-        OAuthParam oAuthParam = OAuthParam.builder()
-                .headerUserName(request.getHeader("header_username"))
-                .headerPassword(request.getHeader("header_password"))
-                .grantType(parameters.get("grant_type"))
-                .scope(parameters.get("scope"))
-                .username(parameters.get("username"))
-                .password(parameters.get("password"))
-                .build();
-        OAuth2AccessToken token = userService.userLogin(oAuthParam).getBody();
+    public Mono login(OAuthParam oAuthParam) {
+        ResponseEntity<OAuth2AccessToken> token = userService.userLogin(oAuthParam);
         return Mono.just(token);
     }
 

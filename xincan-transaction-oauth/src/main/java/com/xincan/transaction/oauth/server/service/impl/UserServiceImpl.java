@@ -1,18 +1,24 @@
 package com.xincan.transaction.oauth.server.service.impl;
 
 import cn.com.hatech.common.data.universal.AbstractService;
+import com.alibaba.fastjson.JSON;
 import com.xincan.transaction.oauth.config.redis.CustomRedisTokenStore;
 import com.xincan.transaction.oauth.server.entity.OAuthParam;
 import com.xincan.transaction.oauth.server.entity.User;
-import com.xincan.transaction.oauth.server.mapper.user.IUserMapper;
 import com.xincan.transaction.oauth.server.service.IUserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xincan.transaction.oauth.server.utils.TokenUtils;
+import feign.Client;
+import feign.Contract;
+import feign.Feign;
+import feign.MethodMetadata;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.support.FeignUtils;
+import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.http.HttpEntity;
@@ -22,23 +28,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.security.Principal;
 import java.util.Base64;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
 
 @Service
 public class UserServiceImpl extends AbstractService<User> implements IUserService {
 
     /**
-     * 注入
+     * 注入restTemplate
      */
     @Autowired
     private RestTemplate restTemplate;
@@ -67,6 +70,9 @@ public class UserServiceImpl extends AbstractService<User> implements IUserServi
     @Autowired
     private TokenStore tokenStore;
 
+    @Autowired
+    private Client client;
+
     /**
      * 发送登录请求到认证中心, 获取登录token
      * @param oAuthParam
@@ -75,7 +81,7 @@ public class UserServiceImpl extends AbstractService<User> implements IUserServi
     @Override
     public ResponseEntity<OAuth2AccessToken> userLogin(OAuthParam oAuthParam) {
         // 创建basic auth的header
-        String userMsg = oAuthParam.getHeaderUserName() + ":" + oAuthParam.getHeaderPassword();
+        String userMsg = oAuthParam.getClientId() + ":" + oAuthParam.getClientSecret();
         String base64UserMsg = Base64.getEncoder().encodeToString(userMsg.getBytes());
         // 查询eureka注册服务
         List<ServiceInstance> serviceInstances = discoveryClient.getInstances(applicationName);

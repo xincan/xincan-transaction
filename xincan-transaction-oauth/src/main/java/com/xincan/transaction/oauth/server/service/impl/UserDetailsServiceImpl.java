@@ -4,9 +4,6 @@ package com.xincan.transaction.oauth.server.service.impl;
 import com.xincan.transaction.oauth.server.entity.Tenant;
 import com.xincan.transaction.oauth.server.entity.User;
 import com.xincan.transaction.oauth.server.mapper.user.IUserMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.shardingsphere.api.hint.HintManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,8 +16,7 @@ import java.util.List;
 
 
 /**
- * @author Levin
- * @date 2017-08-15.
+ * 查询用户信息
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -28,28 +24,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Resource
     private IUserMapper userMapper;
 
-    /**
-     * 定义的主数据源
-     */
-    @Value("${spring.datasource.name}")
-    private String mainDataSource;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 查询用户及其角色信息
-        try {
-            HintManager.getInstance().setDatabaseShardingValue(mainDataSource);
-            User user = userMapper.findByUsername(username);
-            if (user==null) {
-                throw new UnauthorizedUserException("用户不存在");
-            }
-            // 查询用户所属租户信息
-            List<Tenant> tenants = userMapper.findTenantByUserId(user.getId());
-            user.setTenants(tenants);
-            return user;
+        User user = userMapper.findByUsername(username);
+        if (user==null) {
+            throw new UnauthorizedUserException("用户不存在");
         }
-        finally {
-            HintManager.clear();
-        }
+        // 查询用户所属租户信息
+        List<Tenant> tenants = userMapper.findTenantByUserId(user.getId());
+        user.setTenants(tenants);
+        return user;
     }
 }
