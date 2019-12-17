@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xincan.transaction.server.user.mapper.IUserMapper">
+
+    <resultMap id="BaseResultMap" type="com.xincan.transaction.server.user.entity.User">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="is_admin" jdbcType="INTEGER" property="isAdmin"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="area_id" jdbcType="VARCHAR" property="areaId"/>
+        <result column="organization_id" jdbcType="VARCHAR" property="organizationId"/>
+        <result column="edit_user_id" jdbcType="VARCHAR" property="editUserId"/>
+        <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
+        <!-- 角色表role -->
+        <collection property="authorities" ofType="com.xincan.transaction.server.role.entity.Role">
+            <id column="role_id" jdbcType="VARCHAR" property="id"/>
+            <result column="role_name" jdbcType="VARCHAR" property="name"/>
+        </collection>
+    </resultMap>
+
+    <select id="findUserByLoginAccountType" resultMap="BaseResultMap">
+        SELECT
+        t1.id, password, t1.name, phone, t2.role_id, t3.name role_name
+        from user t1
+        left join user_role t2 on t1.id = t2.user_id
+		left join role t3 on t2.role_id = t3.id
+		<where>
+            <choose>
+                <when test="userLoginAccountType.type == 'account' and userLoginAccountType.username != null">
+                    and t1.name = #{username}
+                </when>
+                <when test="userLoginAccountType.type == 'phone' and userLoginAccountType.username != null">
+                    and t1.phone = #{username}
+                </when>
+                <when test="userLoginAccountType.type == 'email' and userLoginAccountType.username != null">
+                    and t1.email = #{username}
+                </when>
+                <otherwise>
+                    and 1 <![CDATA[ <> ]]> 1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+</mapper>
