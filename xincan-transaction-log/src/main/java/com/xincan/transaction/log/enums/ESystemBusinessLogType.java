@@ -1,5 +1,7 @@
-package com.xincan.transaction.log.enumer;
+package com.xincan.transaction.log.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -11,11 +13,9 @@ import lombok.Getter;
  * @create: 2019/12/16 16:29
  * @version: 1.0
  */
-@ApiModel(value = "SystemLog", description = "系统操作日志类型枚举类")
+@Api(value = "ESystemBusinessLogType", description = "系统操作日志类型枚举类")
 @Getter
 public enum ESystemBusinessLogType {
-
-//    登录日志，操作日志，流程日志，脚本日志
 
     BUSINESS_LOGIN(1, "登录日志"),
     BUSINESS_OPERATION(2, "操作日志"),
@@ -23,6 +23,7 @@ public enum ESystemBusinessLogType {
     BUSINESS_SCRIPT(4, "脚本日志")
     ;
 
+    @EnumValue
     @ApiModelProperty(value="操作日志类型CODE码", dataType = "Integer", example = "1")
     private Integer code;
 
@@ -33,4 +34,5 @@ public enum ESystemBusinessLogType {
         this.code = code;
         this.message = message;
     }
+
 }
