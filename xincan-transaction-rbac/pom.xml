@@ -12,11 +12,11 @@
     </parent>
     
     <groupId>com.xincan.transaction</groupId>
-    <artifactId>xincan-transaction-system</artifactId>
+    <artifactId>xincan-transaction-rbac</artifactId>
     <packaging>jar</packaging>
-    <version>${xincan-transaction.version}</version>
-    <name>xincan-transaction-system</name>
-    <description>xincan-transaction-system系统微服务</description>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>xincan-transaction-rbac</name>
+    <description>xincan-transaction-rbac</description>
 
     <dependencies>
 
@@ -136,6 +136,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot-maven-plugin.version}</version>
                 <configuration>
                     <fork>true</fork> <!-- 如果没有该配置，devtools不会生效 -->
                 </configuration>

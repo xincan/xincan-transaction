@@ -26,7 +26,7 @@
         <module>../xincan-transaction-oauth</module>
 
         <!-- 认证中心微服务 -->
-        <module>../xincan-transaction-system</module>
+        <module>../xincan-transaction-rbac</module>
     </modules>
 
 

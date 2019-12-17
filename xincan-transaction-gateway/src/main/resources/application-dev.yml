@@ -4,7 +4,7 @@ server:
 
 eureka:
   instance:
-    hostname: localhost
+    hostname: 192.168.1.186
     port: 8761
     prefer-ip-address: true # 表示：将自己的ip注册到eureka
     instance-id: ${eureka.instance.hostname}:${server.port} # 以[IP地址:端口号]作为注册地址
@@ -43,14 +43,14 @@ spring:
         - id: xincan-transaction-oauth
           uri: lb://${spring.cloud.gateway.routes[0].id}
           predicates:
-            - Path=/api/${spring.cloud.gateway.routes[0].id}/**
+            - Path=/api/oauth/**
           filters:
             - SwaggerHeaderFilter
             - StripPrefix=2
-        - id: xincan-transaction-system
+        - id: xincan-transaction-rbac
           uri: lb://${spring.cloud.gateway.routes[1].id}
           predicates:
-            - Path=/api/${spring.cloud.gateway.routes[1].id}/**
+            - Path=/api/rbac/**
           filters:
             - SwaggerHeaderFilter
             - StripPrefix=2
