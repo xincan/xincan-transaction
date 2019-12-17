@@ -24,7 +24,8 @@ public class ResourceServerConfig  extends ResourceServerConfigurerAdapter {
         http.authorizeRequests()
                 // 允许未授权访问的请求路径
                 .antMatchers("/user/login", "/user/principal")
-                .permitAll();
+                .permitAll()
+                ;
     }
 
     @Override

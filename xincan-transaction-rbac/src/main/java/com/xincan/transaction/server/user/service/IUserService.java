@@ -2,7 +2,6 @@ package com.xincan.transaction.server.user.service;
 
 import cn.com.hatech.common.data.universal.IBaseService;
 import com.xincan.transaction.server.user.entity.User;
-import com.xincan.transaction.server.user.vo.UserLoginAccountTypeVo;
 
 /**
  * @Copyright (C), 2019,北京同创永益科技发展有限公司
@@ -16,5 +15,5 @@ import com.xincan.transaction.server.user.vo.UserLoginAccountTypeVo;
  */
 public interface IUserService extends IBaseService<User> {
 
-    User findUserByLoginAccountType(UserLoginAccountTypeVo userLoginAccountType);
+    User findUserByUsername(String username);
 }

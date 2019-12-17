@@ -19,11 +19,11 @@
         <!-- 角色表role -->
         <collection property="authorities" ofType="com.xincan.transaction.server.role.entity.Role">
             <id column="role_id" jdbcType="VARCHAR" property="id"/>
-            <result column="role_name" jdbcType="VARCHAR" property="name"/>
+            <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         </collection>
     </resultMap>
 
-    <select id="findUserByLoginAccountType" resultMap="BaseResultMap">
+    <select id="findUserByUsername" resultMap="BaseResultMap">
         SELECT
         t1.id, password, t1.name, phone, t2.role_id, t3.name role_name
         from user t1
@@ -31,13 +31,13 @@
 		left join role t3 on t2.role_id = t3.id
 		<where>
             <choose>
-                <when test="userLoginAccountType.type == 'account' and userLoginAccountType.username != null">
+                <when test="type == 'account' and username != null">
                     and t1.name = #{username}
                 </when>
-                <when test="userLoginAccountType.type == 'phone' and userLoginAccountType.username != null">
+                <when test="type == 'phone' and username != null">
                     and t1.phone = #{username}
                 </when>
-                <when test="userLoginAccountType.type == 'email' and userLoginAccountType.username != null">
+                <when test="type == 'email' and username != null">
                     and t1.email = #{username}
                 </when>
                 <otherwise>

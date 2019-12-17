@@ -1,17 +1,14 @@
 package com.xincan.transaction.server.user.controller;
 
-import cn.com.hatech.common.data.result.ResultObject;
 import com.xincan.transaction.result.ResponseResult;
+import com.xincan.transaction.result.ResultObject;
 import com.xincan.transaction.server.user.entity.User;
 import com.xincan.transaction.server.user.service.IUserService;
-import com.xincan.transaction.server.user.vo.UserLoginAccountTypeVo;
 import groovy.util.logging.Slf4j;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,13 +36,17 @@ public class UserController {
     }
 
     /**
-     * 根据用户登陆类型查询用户信息
-     * @param userLoginAccountType
+     * 根据账号查询用户信息
+     * @param username
      * @return
      */
-    @ApiOperation(value="根据登陆类型查询用户信息",httpMethod="GET",notes="根据登陆类型查询用户信息")
-    @GetMapping("/findUserByLoginAccountType")
-    public User insert(@ApiParam @Validated UserLoginAccountTypeVo userLoginAccountType) {
-        return userService.findUserByLoginAccountType(userLoginAccountType);
+    @ApiOperation(value="根据账号查询用户信息",httpMethod="POST",notes="根据账号查询用户信息")
+    @PostMapping("/findUserByUsername")
+    public ResultObject<User> findUserByUsername(String username) {
+        User user = userService.findUserByUsername(username);
+        if (user == null) {
+            return ResponseResult.error("用户不存在");
+        }
+        return ResponseResult.success(user);
     }
 }

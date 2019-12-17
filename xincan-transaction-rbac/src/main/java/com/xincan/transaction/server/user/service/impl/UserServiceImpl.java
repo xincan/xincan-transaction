@@ -1,12 +1,15 @@
 package com.xincan.transaction.server.user.service.impl;
 
 import cn.com.hatech.common.data.universal.AbstractService;
+import com.google.common.collect.Maps;
 import com.xincan.transaction.server.user.entity.User;
 import com.xincan.transaction.server.user.mapper.IUserMapper;
 import com.xincan.transaction.server.user.service.IUserService;
-import com.xincan.transaction.server.user.vo.UserLoginAccountTypeVo;
+import com.xincan.transaction.server.user.utils.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * @Copyright (C), 2019,北京同创永益科技发展有限公司
@@ -29,7 +32,16 @@ public class UserServiceImpl extends AbstractService<User> implements IUserServi
     }
 
     @Override
-    public User findUserByLoginAccountType(UserLoginAccountTypeVo userLoginAccountType) {
-        return this.userMapper.findUserByLoginAccountType(userLoginAccountType);
+    public User findUserByUsername(String username) {
+        Map<String,Object> params = Maps.newHashMap();
+        params.put("username",username);
+        params.put("type","account");
+        if (ValidatorUtils.isEmail(username)) {
+            params.put("type","email");
+        }
+        if (ValidatorUtils.isMobile(username)) {
+            params.put("type","phone");
+        }
+        return userMapper.findUserByUsername(params);
     }
 }

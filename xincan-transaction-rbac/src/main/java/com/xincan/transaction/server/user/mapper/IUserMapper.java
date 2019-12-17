@@ -2,9 +2,9 @@ package com.xincan.transaction.server.user.mapper;
 
 import cn.com.hatech.common.data.universal.IBaseMapper;
 import com.xincan.transaction.server.user.entity.User;
-import com.xincan.transaction.server.user.vo.UserLoginAccountTypeVo;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+
+import java.util.Map;
 
 /**
  * @Copyright (C), 2019,北京同创永益科技发展有限公司
@@ -19,5 +19,5 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface IUserMapper extends IBaseMapper<User> {
 
-    User findUserByLoginAccountType(@Param("userLoginAccountType") UserLoginAccountTypeVo userLoginAccountType);
+    User findUserByUsername(Map<String, Object> params);
 }
