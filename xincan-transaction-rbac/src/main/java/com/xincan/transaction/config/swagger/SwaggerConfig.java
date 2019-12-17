@@ -32,7 +32,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.xincan.transaction.system.server"))
+                .apis(RequestHandlerSelectors.basePackage("com.xincan.transaction.server"))
                 .paths(PathSelectors.any())
                 .build()
                 // 配置权限
