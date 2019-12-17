@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xincan.transaction.server.user.mapper.IUserGroupMapper">
+
+    <resultMap id="BaseResultMap" type="com.xincan.transaction.server.user.entity.UserGroup">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="user_group_name" jdbcType="VARCHAR" property="userGroupName"/>
+        <result column="edit_user_id" jdbcType="VARCHAR" property="editUserId"/>
+        <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
+    </resultMap>
+</mapper>
